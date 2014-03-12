@@ -5,4 +5,4 @@ The Reflux installation centres around how we see ourselves, how our media-engul
 
 The installation could be characterized as a digital mirror that asks what your name is and composes a poster based on images and data it has found about your name. Your experience with the installation concludes with your own printed portrait poster that you'll be able to take home with you.
 
-This project is created for exhibit at the Centre for Digital Media in April 2014
+This project is created by Haig Armen (haig [at] liftstudios.ca) for exhibit at the Centre for Digital Media in April 2014
