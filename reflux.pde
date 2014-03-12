@@ -28,6 +28,7 @@ TextField tField;
 
 Ditherer img;
 int gridSize = 10;
+int drawMode = 0;
 
 String folder_path  = "output/";
 String file_format  = ".jpg";
@@ -73,11 +74,11 @@ void setup() {
 }
 
 void draw() {
-  background(0);
+  background(255);
   renderCam();
   renderCapture();
   // render different ditherers
-  renderFilteredImage();  
+  renderFilteredImage(drawMode);  
   renderTextField();
 
   }
@@ -91,7 +92,8 @@ void keyPressed() {
     render_capture = false;
     render_dither = true;
     render_showimage = true;
-    img = new Ditherer(capture_img);
+    drawMode = 1;
+    img = new Ditherer(capture_img,1);
     break;
   case 's':
     if (render_dither) {
@@ -100,7 +102,7 @@ void keyPressed() {
     break;
   case 'p':
     if (render_dither) {
-      saveHiResPDF(5, "output/" + timestamp()+".pdf");
+      saveHiResPDF(1, "output/" + timestamp()+".pdf");
     }
     break;
   case 'v':
@@ -108,32 +110,28 @@ void keyPressed() {
     tField.setMsg("Press the 'c' key to capture image.");
     break;
   case '1':
-    render_showimage = true;
-    render_halftone = false;
-    render_halftoneSq = false;
-    render_maze = false;
-    render_digits = false;
+    drawMode = 1;
     break;
   case '2':
-    render_showimage = false;
-    render_halftone = true;
-    render_halftoneSq = false;
-    render_maze = false;
-    render_digits = false;
+    drawMode = 2;
     break;
   case '3':
-    render_showimage = false;
-    render_halftone = false;
-    render_halftoneSq = true;
-    render_maze = false;
-    render_digits = false;
+    drawMode = 3;
     break;
   case '4':
-    render_showimage = false;
-    render_halftone = false;
-    render_halftoneSq = false;
-    render_maze = true;
-    render_digits = false;
+    drawMode = 4;
+    break;
+  case '5':
+    drawMode = 5;
+    break;
+  case '6':
+    drawMode = 6;
+    break;
+  case '7':
+    drawMode = 7;
+    break;
+  case '8':
+    drawMode = 8;
     break;
   }
 
@@ -201,23 +199,12 @@ void renderCapture() {
 }
 
 
-void renderFilteredImage() {
+void renderFilteredImage(int drawMode) {
   if (render_dither) {
-  if (render_showimage) {
-    img.showImage();
-  }
-  if (render_halftone) {
-    img.halftone(gridSize);
-  }
-  if (render_halftoneSq) {
-    img.halftoneSq(gridSize);
-  }
-  if (render_maze) {
-    img.maze(gridSize);
-  }
+    img.filterImage(drawMode);
+    println("drawing filteredImage again");
   }
 };
-
 
 void renderTextField() {
   if (render_textfield) {
@@ -245,7 +232,7 @@ void saveHiResPDF(int scaleFactor, String file) {
   PGraphics pdf = createGraphics(width*scaleFactor, height*scaleFactor, PDF, file);
   beginRecord(pdf);
   pdf.scale(scaleFactor);
-  renderFilteredImage();
+  renderFilteredImage(drawMode);
   endRecord();
 }
 
