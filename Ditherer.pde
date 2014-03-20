@@ -5,10 +5,12 @@ class Ditherer {
   PImage targetImage;
   int drawMode;
 
-    float mouseXFactor = map(mouseX, 0,width, 0.05,1);
-    float mouseYFactor = map(mouseY, 0,height, 0.05,1);
-//    float mouseXFactor = .1;
-//    float mouseYFactor = .1;
+//    float mouseXFactor = map(mouseX, 0,width, 0.05,1);
+//    float mouseYFactor = map(mouseY, 0,height, 0.05,1);
+    float mouseXFactor = random(.25,1);
+    float mouseYFactor = random(.25,1);
+    
+    
 
     int gridSize = 6;
 
@@ -18,8 +20,9 @@ class Ditherer {
   }
   
   void filterImage(int drawMode) {
-//    println("drawMode is " + drawMode);
-//    println("targetImage width is " + targetImage.width);
+    println("drawMode is " + drawMode);
+    println("xFactor is " + mouseXFactor);
+    println("yFactor is " + mouseYFactor);
   for (int gridX = 0; gridX < this.targetImage.width; gridX += gridSize) {
     for (int gridY = 0; gridY < this.targetImage.height; gridY += gridSize) {
       // grid position + tile size
@@ -38,7 +41,7 @@ class Ditherer {
         // greyscale to stroke weight
         float w1 = map(greyscale, 0,255, 15,0.1);
         stroke(0);
-        strokeWeight(w1 * mouseXFactor);
+        strokeWeight(w1 * (mouseXFactor / 4 ));
         line(posX, posY, posX + gridSize, posY + gridSize); 
         break;
       case 2:
@@ -46,22 +49,22 @@ class Ditherer {
         fill(0);
         noStroke();
         float r2 = 1.5 * sqrt(tileWidth*tileWidth*(1-greyscale/255.0));
-        r2 = r2 * mouseXFactor * 3;
+        r2 = r2 * (mouseXFactor * 10);
         ellipse(posX, posY, r2, r2);
         break;
       case 3:
         // greyscale to line length
         float l3 = map(greyscale, 0,255, 30,0.1);
-        l3 = l3 * mouseXFactor;   
+        l3 = l3 * (mouseXFactor * .25);   
         stroke(0);
-        strokeWeight(10 * mouseYFactor);
+        strokeWeight(10 * mouseYFactor * .05);
         line(posX, posY, posX+l3, posY+l3);
         break;
       case 4:
         // greyscale to rotation, line length and stroke weight
         stroke(0);
         float w4 = map(greyscale, 0,255, 10,0);
-        strokeWeight(w4 * mouseXFactor + 0.1);
+        strokeWeight(w4 * (mouseXFactor * 0.1));
         float l4 = map(greyscale, 0,255, 35,0);
         l4 = l4 * mouseYFactor;
         pushMatrix();
