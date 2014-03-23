@@ -4,11 +4,10 @@
 class Ditherer {
   PImage targetImage;
   int drawMode;
-
 //    float mouseXFactor = map(mouseX, 0,width, 0.05,1);
 //    float mouseYFactor = map(mouseY, 0,height, 0.05,1);
-    float mouseXFactor = random(.25,1);
-    float mouseYFactor = random(.25,1);
+    float mouseXFactor = random(.25,.5);
+    float mouseYFactor = random(.25,.5);
     
     
 

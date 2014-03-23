@@ -1,6 +1,8 @@
 import processing.pdf.*;
 import java.util.Calendar;
 import processing.video.*;
+import controlP5.*;
+
 
 boolean savePDF = false;
 PImage capture_img;
@@ -18,12 +20,9 @@ boolean render_halftone;
 boolean render_halftoneSq;
 boolean render_maze;
 boolean render_digits;
- 
-  // not sure if we need this array of filter types to reference the filter functions
- String [] filterList = { 
-  "showImage", "halftone", "halftoneSq", "maze", "digits", "charactersLower", "charactersUpper"
-};
 
+ControlP5 cp5;
+ 
 TextField tField;
 
 Ditherer img;
@@ -67,7 +66,7 @@ void setup() {
 
     capture_img = new PImage(video_width, video_height);
   }
-  tField = new TextField("Press the c key to capture image.", width/2, 496, 18, 255);
+  tField = new TextField("Press the c key to capture image.", width/2, height/2, 20, 255);
 
   background(255);
   PFont.list();

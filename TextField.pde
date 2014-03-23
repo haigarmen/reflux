@@ -1,15 +1,15 @@
 class TextField{
 
-PFont veraSans;
+PFont greyscaleBasic;
 String msg;
 int xPos;
 int yPos;
 int fontSize;
 int fontColor;
 
-  public TextField(String inMsg, int x, int y,int fSize,int clr)
+public TextField(String inMsg, int x, int y,int fSize,int clr)
   {
-    veraSans = loadFont("BitstreamVeraSans-Bold.vlw");
+    greyscaleBasic = loadFont("GreyscaleBasic.vlw");
     msg = inMsg;
     xPos = x;
     yPos = y;
@@ -30,9 +30,13 @@ int fontColor;
   }
   void display()
   {
-    textFont(veraSans,fontSize);
+    noStroke();
+    fill(0, 80);
+    rectMode(CENTER);
+    rect(xPos, yPos, (width*.8), 40);
+    textFont(greyscaleBasic,fontSize);
+    fill(fontColor);
     textAlign(CENTER);
     text(msg,xPos,yPos);
-    fill(fontColor);
   } 
 }
