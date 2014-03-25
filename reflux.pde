@@ -1,3 +1,8 @@
+/* Reflux Art Installation
+a personal project that captures a photo and grabs images from the web of you
+and creates a printed poster for you to take home
+*/
+
 import processing.pdf.*;
 import java.util.Calendar;
 import processing.video.*;
@@ -20,9 +25,10 @@ boolean render_halftone;
 boolean render_halftoneSq;
 boolean render_maze;
 boolean render_digits;
+boolean render_namefield;
 
 ControlP5 cp5;
- 
+
 TextField tField;
 
 Ditherer img;
@@ -33,8 +39,12 @@ String folder_path  = "output/";
 String file_format  = ".jpg";
 int TIMER_DURATION = 1500;
 
+ProgressBar progBar;
+
 // A variable for the frame we grab from the webcam
 Capture cam;
+
+Scraper scraping;
 
 void setup() {
   size(640, 500);
@@ -45,6 +55,7 @@ void setup() {
   render_cam = true;
   render_textfield = true;
   app_saving = false;
+  cp5 = new ControlP5(this);
 
 
   //get a list of available camera modes and list them
@@ -70,6 +81,8 @@ void setup() {
 
   background(255);
   PFont.list();
+    progBar = new ProgressBar(4000);
+
 }
 
 void draw() {
@@ -79,7 +92,8 @@ void draw() {
   // render different ditherers
   renderFilteredImage(drawMode);  
   renderTextField();
-
+  progBar.display();
+  renderNameField();
   }
 
 //wrap any of these in a beginRecord() and endRecord() to save as pdf.
@@ -108,6 +122,8 @@ void keyPressed() {
     restartCam();
     tField.setMsg("Press the 'c' key to capture image.");
     break;
+  case 'w':
+    scraping = new Scraper("haig armen");
   case '1':
     drawMode = 1;
     break;
@@ -210,6 +226,21 @@ void renderTextField() {
     tField.display();
   }
 }
+
+void renderNameField() {
+  if (render_namefield) {
+  cp5.addTextfield("type your full name & hit enter")
+    .setPosition(500, 20)
+      .setSize(200, 40)
+        .setFont(tField.greyscaleBasic)
+          .setFocus(true)
+            .setColor(color(203))
+              ;
+    textFont(tField.greyscaleBasic);
+
+  }
+}
+
 void renderCam() {
   if (cam.available()) {
     cam.read();

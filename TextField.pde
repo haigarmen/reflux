@@ -1,5 +1,6 @@
-class TextField{
+class TextField {
 
+ControlP5 cp5;
 PFont greyscaleBasic;
 String msg;
 int xPos;
@@ -7,8 +8,8 @@ int yPos;
 int fontSize;
 int fontColor;
 
-public TextField(String inMsg, int x, int y,int fSize,int clr)
-  {
+
+public TextField(String inMsg, int x, int y,int fSize,int clr) {
     greyscaleBasic = loadFont("GreyscaleBasic.vlw");
     msg = inMsg;
     xPos = x;
@@ -16,20 +17,16 @@ public TextField(String inMsg, int x, int y,int fSize,int clr)
     fontSize = fSize;
     fontColor = clr;
   }
-  void setMsg(String inMsg)
-  {
+  void setMsg(String inMsg) {
     msg = inMsg;
   }
-  void setFontSize(int size)
-  {
+  void setFontSize(int size) {
     fontSize = size;
   }
-  void setFontColor(int clr)
-  {
+  void setFontColor(int clr) {
     fontColor = clr;
   }
-  void display()
-  {
+  void display() {
     noStroke();
     fill(0, 80);
     rectMode(CENTER);
@@ -38,5 +35,5 @@ public TextField(String inMsg, int x, int y,int fSize,int clr)
     fill(fontColor);
     textAlign(CENTER);
     text(msg,xPos,yPos);
-  } 
+  }
 }

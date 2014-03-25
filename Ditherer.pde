@@ -8,9 +8,6 @@ class Ditherer {
 //    float mouseYFactor = map(mouseY, 0,height, 0.05,1);
     float mouseXFactor = random(.25,.5);
     float mouseYFactor = random(.25,.5);
-    
-    
-
     int gridSize = 6;
 
   Ditherer(PImage CaptureImage, int drawMode) {
@@ -19,9 +16,9 @@ class Ditherer {
   }
   
   void filterImage(int drawMode) {
-    println("drawMode is " + drawMode);
-    println("xFactor is " + mouseXFactor);
-    println("yFactor is " + mouseYFactor);
+//    println("drawMode is " + drawMode);
+//    println("xFactor is " + mouseXFactor);
+//    println("yFactor is " + mouseYFactor);
   for (int gridX = 0; gridX < this.targetImage.width; gridX += gridSize) {
     for (int gridY = 0; gridY < this.targetImage.height; gridY += gridSize) {
       // grid position + tile size
