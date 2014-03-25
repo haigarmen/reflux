@@ -26,6 +26,7 @@ boolean render_halftoneSq;
 boolean render_maze;
 boolean render_digits;
 boolean render_namefield;
+boolean render_scraper;
 
 ControlP5 cp5;
 
@@ -68,7 +69,7 @@ void setup() {
   else {
     //    println("Available cameras:");
     for (int i = 0; i < cameras.length; i++) {
-      println(cameras[i]);
+//      println(cameras[i]);
     }
     // The camera can be initialized directly using an 
     // element from the array returned by list():
@@ -94,6 +95,7 @@ void draw() {
   renderTextField();
   progBar.display();
   renderNameField();
+  renderScraper();
   }
 
 //wrap any of these in a beginRecord() and endRecord() to save as pdf.
@@ -123,7 +125,9 @@ void keyPressed() {
     tField.setMsg("Press the 'c' key to capture image.");
     break;
   case 'w':
+    render_cam = false;
     scraping = new Scraper("haig armen");
+    render_scraper = true;
   case '1':
     drawMode = 1;
     break;
@@ -240,6 +244,13 @@ void renderNameField() {
 
   }
 }
+
+void renderScraper() {
+if (render_scraper) {
+  scraping.showImages();
+}
+}
+
 
 void renderCam() {
   if (cam.available()) {
