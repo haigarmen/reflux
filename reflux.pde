@@ -1,7 +1,7 @@
 /* Reflux Art Installation
-a personal project that captures a photo and grabs images from the web of you
-and creates a printed poster for you to take home
-*/
+ a personal project that captures a photo and grabs images from the web of you
+ and creates a printed poster for you to take home
+ */
 
 import processing.pdf.*;
 import java.util.Calendar;
@@ -47,6 +47,11 @@ Capture cam;
 
 Scraper scraping;
 
+boolean sketchFullScreen() {
+  return true;
+}
+
+
 void setup() {
   size(640, 500);
   smooth();
@@ -69,7 +74,7 @@ void setup() {
   else {
     //    println("Available cameras:");
     for (int i = 0; i < cameras.length; i++) {
-//      println(cameras[i]);
+      //      println(cameras[i]);
     }
     // The camera can be initialized directly using an 
     // element from the array returned by list():
@@ -82,8 +87,7 @@ void setup() {
 
   background(255);
   PFont.list();
-    progBar = new ProgressBar(4000);
-
+  progBar = new ProgressBar(4000);
 }
 
 void draw() {
@@ -96,7 +100,7 @@ void draw() {
   progBar.display();
   renderNameField();
   renderScraper();
-  }
+}
 
 //wrap any of these in a beginRecord() and endRecord() to save as pdf.
 
@@ -108,7 +112,7 @@ void keyPressed() {
     render_dither = true;
     render_showimage = true;
     drawMode = 1;
-    img = new Ditherer(capture_img,1);
+    img = new Ditherer(capture_img, 1);
     break;
   case 's':
     if (render_dither) {
@@ -221,7 +225,7 @@ void renderCapture() {
 void renderFilteredImage(int drawMode) {
   if (render_dither) {
     img.filterImage(drawMode);
-    println("drawing filteredImage again");
+//    println("drawing filteredImage again");
   }
 };
 
@@ -233,22 +237,21 @@ void renderTextField() {
 
 void renderNameField() {
   if (render_namefield) {
-  cp5.addTextfield("type your full name & hit enter")
-    .setPosition(500, 20)
-      .setSize(200, 40)
-        .setFont(tField.greyscaleBasic)
-          .setFocus(true)
-            .setColor(color(203))
-              ;
+    cp5.addTextfield("type your full name & hit enter")
+      .setPosition(500, 20)
+        .setSize(200, 40)
+          .setFont(tField.greyscaleBasic)
+            .setFocus(true)
+              .setColor(color(203))
+                ;
     textFont(tField.greyscaleBasic);
-
   }
 }
 
 void renderScraper() {
-if (render_scraper) {
-  scraping.showImages();
-}
+  if (render_scraper) {
+    scraping.showImages();
+  }
 }
 
 
