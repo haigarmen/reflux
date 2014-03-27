@@ -33,7 +33,7 @@ ControlP5 cp5;
 TextField tField;
 
 Ditherer img;
-int gridSize = 10;
+//int gridSize = 10;
 int drawMode = 0;
 
 String folder_path  = "output/";
@@ -48,11 +48,13 @@ Capture cam;
 Scraper scraping;
 
 boolean sketchFullScreen() {
-  return true;
+  return false;
 }
 
 
 void setup() {
+  frame.setBackground(new java.awt.Color(0,0,0));
+  background(0);
   size(640, 500);
   smooth();
 
@@ -160,14 +162,17 @@ void keyPressed() {
 
   if (key == CODED) {
     if (keyCode == UP) {
-      gridSize++;
-      println("gridSize is " + gridSize);
+      img.gridSize++;
+      println("gridSize is " + img.gridSize);
     }
     if (keyCode == DOWN) {
-      if (gridSize > 2) {
-        gridSize--;
-        println("gridSize is " + gridSize);
+      if (img.gridSize > 2) {
+        img.gridSize--;
+        println("gridSize is " + img.gridSize);
       }
+    }
+    if (keyCode == ESC) {
+      key = 0; println("Trapped! Muhaha! ;-)");
     }
   }
 }
@@ -238,8 +243,8 @@ void renderTextField() {
 void renderNameField() {
   if (render_namefield) {
     cp5.addTextfield("type your full name & hit enter")
-      .setPosition(500, 20)
-        .setSize(200, 40)
+      .setPosition(300, 20)
+        .setSize(20, 40)
           .setFont(tField.greyscaleBasic)
             .setFocus(true)
               .setColor(color(203))

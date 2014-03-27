@@ -1,4 +1,4 @@
-//  Title: Ditherer
+ //  Title: Ditherer
 //  Description: A class that manages various image dithering techniques.
 
 class Ditherer {

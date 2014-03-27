@@ -8,6 +8,8 @@ class Scraper {
   int cropSize = 100;
   int imagePadding = 5;
   int numberOfImages = 20;
+  int numberOfRows = 2;
+
   JSONObject json;
 //  JSONArray results;
   JSONArray results = new JSONArray();
@@ -63,12 +65,14 @@ class Scraper {
           photoWidth = photo.width;
           photoHeight = photo.height;
           ratio = float(photoWidth) / float(photoHeight);
-
+          
+          int newX = ((cropSize+imagePadding) * i)+imagePadding;
+          int newY = (i * int(float(cropSize+imagePadding)/4));
           if (photoWidth > photoHeight) {
-            copy(photo, (photoWidth-photoHeight)/2, 0, photoHeight, photoHeight, ((cropSize+imagePadding) * i)+imagePadding, (i * int(float(cropSize+imagePadding)/4)), cropSize, cropSize);
+            copy(photo, (photoWidth-photoHeight)/2, 0, photoHeight, photoHeight, newX, newY, cropSize, cropSize);
           } 
           else {
-            copy(photo, 0, (photoHeight-photoWidth)/2, photoWidth, photoWidth, ((cropSize+imagePadding) * i)+imagePadding, (i * int(float(cropSize+imagePadding)/4)), cropSize, cropSize);
+            copy(photo, 0, (photoHeight-photoWidth)/2, photoWidth, photoWidth, newX, newY, cropSize, cropSize);
           }
           fill(203);
 
