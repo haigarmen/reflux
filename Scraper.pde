@@ -45,7 +45,7 @@ class Scraper {
       }
     }
     println(results);
-
+showImages();
   }
 
   void showImages() {

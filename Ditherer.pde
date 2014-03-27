@@ -26,7 +26,6 @@ class Ditherer {
         float tileHeight = height / (float)this.targetImage.height;
         float posX = tileWidth * gridX;
         float posY = tileHeight * gridY;
-
         // get current color
         color c = this.targetImage.pixels[(gridY)*this.targetImage.width+(gridX)];
         // greyscale conversion

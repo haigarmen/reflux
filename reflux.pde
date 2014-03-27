@@ -3,6 +3,18 @@
  and creates a printed poster for you to take home
  */
 
+//stuff to do:
+// actual size sketch & fullscreen
+// get video mirror fullscreen -- this is done but I don't have the capture mirrored yet
+// create a countdown for image capture
+// get name from textfield
+// create the flow:
+// 1. get your name 2.take a photo 3. compose poster 4. print screen 5. reset
+// refine layout
+// refine image filter (gridsize)
+// need to escape web entities
+ 
+
 import processing.pdf.*;
 import java.util.Calendar;
 import processing.video.*;
@@ -19,7 +31,6 @@ boolean render_cam;
 boolean render_capture;
 boolean render_textfield;
 boolean app_saving;
-boolean render_showimage;
 boolean render_dither;
 boolean render_halftone;
 boolean render_halftoneSq;
@@ -27,7 +38,10 @@ boolean render_maze;
 boolean render_digits;
 boolean render_namefield;
 boolean render_scraper;
+boolean render_progress;
+boolean render_countdown;
 
+boolean timeUp;
 ControlP5 cp5;
 
 TextField tField;
@@ -46,6 +60,12 @@ ProgressBar progBar;
 Capture cam;
 
 Scraper scraping;
+String searchName = "haig+armen";
+
+
+String time = "010";
+int t;
+int interval = 10;
 
 boolean sketchFullScreen() {
   return false;
@@ -54,14 +74,14 @@ boolean sketchFullScreen() {
 
 void setup() {
   frame.setBackground(new java.awt.Color(0,0,0));
-  background(0);
-  size(640, 500);
+  size(1280, 960);
   smooth();
 
   video_width = 640;
   video_height = 480;
-  render_cam = true;
+  render_cam = false;
   render_textfield = true;
+  render_namefield = true;
   app_saving = false;
   cp5 = new ControlP5(this);
 
@@ -83,11 +103,10 @@ void setup() {
     cam = new Capture(this, video_width, video_height, "FaceTime HD Camera"); 
     cam.start();
 
-    capture_img = new PImage(video_width, video_height);
+//    capture_img = new PImage(video_width, video_height);
   }
   tField = new TextField("Press the c key to capture image.", width/2, height/2, 20, 255);
 
-  background(255);
   PFont.list();
   progBar = new ProgressBar(4000);
 }
@@ -99,9 +118,9 @@ void draw() {
   // render different ditherers
   renderFilteredImage(drawMode);  
   renderTextField();
-  progBar.display();
   renderNameField();
   renderScraper();
+  displayTimer();
 }
 
 //wrap any of these in a beginRecord() and endRecord() to save as pdf.
@@ -110,9 +129,12 @@ void keyPressed() {
   switch(key) {
   case 'c':
     captureCam();
+    render_capture = true;
+    render_dither = false;
+    break;
+  case 'd':
     render_capture = false;
     render_dither = true;
-    render_showimage = true;
     drawMode = 1;
     img = new Ditherer(capture_img, 1);
     break;
@@ -131,7 +153,6 @@ void keyPressed() {
     tField.setMsg("Press the 'c' key to capture image.");
     break;
   case 'w':
-    render_cam = false;
     scraping = new Scraper("haig armen");
     render_scraper = true;
   case '1':
@@ -185,6 +206,12 @@ void captureCam() {
   }
   println("capture image");
   capture_img = cam.get();
+  image(capture_img,0,0);
+   pushMatrix();
+   scale(-2,2);
+   translate(-capture_img.width, 0);
+   image(capture_img, -capture_img.width, 0);
+   popMatrix();
   render_cam = false;
   cam.stop();
   render_capture = true;
@@ -244,13 +271,14 @@ void renderNameField() {
   if (render_namefield) {
     cp5.addTextfield("type your full name & hit enter")
       .setPosition(300, 20)
-        .setSize(20, 40)
+        .setSize(400, 40)
           .setFont(tField.greyscaleBasic)
             .setFocus(true)
               .setColor(color(203))
                 ;
     textFont(tField.greyscaleBasic);
   }
+  render_namefield = false;
 }
 
 void renderScraper() {
@@ -259,23 +287,30 @@ void renderScraper() {
   }
 }
 
+void renderProgress() {
+  if (render_progress) {
+  progBar.display();
+  }
+}
 
 void renderCam() {
   if (cam.available()) {
     cam.read();
   }
   if (render_cam) {
+    pushMatrix();
+      scale(-2,2);
+      translate(-cam.width, 0);
     image(cam, 0, 0);
+    popMatrix();
   }
 }
-
 
 // timestamp
 String timestamp() {
   Calendar now = Calendar.getInstance();
   return String.format("%1$ty%1$tm%1$td_%1$tH%1$tM%1$tS", now);
 }
-
 
 void saveHiResPDF(int scaleFactor, String file) {
   PGraphics pdf = createGraphics(width*scaleFactor, height*scaleFactor, PDF, file);
@@ -285,3 +320,31 @@ void saveHiResPDF(int scaleFactor, String file) {
   endRecord();
 }
 
+void displayTimer() {
+  if (timeUp == false) { 
+t = interval-int(millis()/1000);
+    time = nf(t , 3);
+    if(t == 0){
+      println("GAME OVER");
+      timeUp = true;
+    interval+=10;}
+   text(time, (width/2), (height/2)-100);
+  }
+ }
+ 
+ void controlEvent(ControlEvent theEvent) {
+   if (theEvent.isAssignableFrom(Textfield.class)) {
+    println("controlEvent: accessing a string from controller '"
+      +theEvent.getName()+"': "
+      +theEvent.getStringValue()
+      );
+  }
+  searchName = theEvent.getStringValue();
+  searchName = searchName.replaceAll("\\s+", "+");
+  println("passed the name " + searchName);
+//  blendMode(SCREEN);
+  scraping = new Scraper(searchName);
+  noStroke();
+  fill(#3af9ff);
+  rect(5, 0, 420, 520);
+}
