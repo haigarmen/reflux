@@ -8,7 +8,7 @@ class Scraper {
   int cropSize = 100;
   int imagePadding = 5;
   int numberOfImages = 20;
-  int numberOfRows = 2;
+  int numberOfRows = numberOfImages/10;
 
   JSONObject json;
 //  JSONArray results;
@@ -45,11 +45,11 @@ class Scraper {
       }
     }
     println(results);
-showImages();
+    render_countdown=true;
   }
 
   void showImages() {
-//println("JSON results size is: " + results.size());
+println("JSON results size is: " + results.size());
       for (int i = 0; i < results.size(); i++) {
         JSONObject images = results.getJSONObject(i); 
         String title = images.getString("titleNoFormatting");
@@ -67,7 +67,7 @@ showImages();
           ratio = float(photoWidth) / float(photoHeight);
           
           int newX = ((cropSize+imagePadding) * i)+imagePadding;
-          int newY = (i * int(float(cropSize+imagePadding)/4));
+          int newY = (numberOfRows * int(float(cropSize+imagePadding)/4));
           if (photoWidth > photoHeight) {
             copy(photo, (photoWidth-photoHeight)/2, 0, photoHeight, photoHeight, newX, newY, cropSize, cropSize);
           } 
@@ -77,7 +77,7 @@ showImages();
           fill(203);
 
           text(title, 500, 100 + (20  * (i+i) ));
-//          println(title + ", " + image + "i="+i + ", j=" +j);
+          println(title + ", " + image + "i="+i + ", j=" +numberOfRows);
         }
       }
   }

@@ -60,7 +60,7 @@ ProgressBar progBar;
 Capture cam;
 
 Scraper scraping;
-String searchName = "haig+armen";
+String searchName = "haig armen";
 
 
 String time = "010";
@@ -79,7 +79,7 @@ void setup() {
 
   video_width = 640;
   video_height = 480;
-  render_cam = false;
+  render_cam = true;
   render_textfield = true;
   render_namefield = true;
   app_saving = false;
@@ -108,7 +108,7 @@ void setup() {
   tField = new TextField("Press the c key to capture image.", width/2, height/2, 20, 255);
 
   PFont.list();
-  progBar = new ProgressBar(4000);
+//  progBar = new ProgressBar(4000);
 }
 
 void draw() {
@@ -120,7 +120,7 @@ void draw() {
   renderTextField();
   renderNameField();
   renderScraper();
-  displayTimer();
+  renderCountdown();
 }
 
 //wrap any of these in a beginRecord() and endRecord() to save as pdf.
@@ -153,7 +153,8 @@ void keyPressed() {
     tField.setMsg("Press the 'c' key to capture image.");
     break;
   case 'w':
-    scraping = new Scraper("haig armen");
+  println("scraping mode with " + searchName);
+    scraping = new Scraper(searchName);
     render_scraper = true;
   case '1':
     drawMode = 1;
@@ -271,11 +272,11 @@ void renderNameField() {
   if (render_namefield) {
     cp5.addTextfield("type your full name & hit enter")
       .setPosition(300, 20)
-        .setSize(400, 40)
-          .setFont(tField.greyscaleBasic)
-            .setFocus(true)
-              .setColor(color(203))
-                ;
+      .setSize(400, 40)
+      .setFont(tField.greyscaleBasic)
+      .setFocus(true)
+      .setColor(color(203))
+    ;
     textFont(tField.greyscaleBasic);
   }
   render_namefield = false;
@@ -287,9 +288,14 @@ void renderScraper() {
   }
 }
 
-void renderProgress() {
-  if (render_progress) {
-  progBar.display();
+void renderCountdown() {
+  if (render_countdown) {
+  // show countdown
+  // when finished capture cam image
+  // then show progress bar while
+  // downloading images, displaying filtering image, scrap images and text   
+  // save PDF, show "your poster is printing, it will take a few mins" 
+  displayTimer();
   }
 }
 
@@ -299,8 +305,8 @@ void renderCam() {
   }
   if (render_cam) {
     pushMatrix();
-      scale(-2,2);
-      translate(-cam.width, 0);
+    scale(-2,2);
+    translate(-cam.width, 0);
     image(cam, 0, 0);
     popMatrix();
   }
@@ -322,12 +328,15 @@ void saveHiResPDF(int scaleFactor, String file) {
 
 void displayTimer() {
   if (timeUp == false) { 
-t = interval-int(millis()/1000);
+    t = interval-int(millis()/1000);
     time = nf(t , 3);
     if(t == 0){
       println("GAME OVER");
       timeUp = true;
-    interval+=10;}
+      captureCam();
+      render_countdown = false;
+    interval+=10;
+  }
    text(time, (width/2), (height/2)-100);
   }
  }
@@ -339,12 +348,13 @@ t = interval-int(millis()/1000);
       +theEvent.getStringValue()
       );
   }
+// 
+//  if (theEvent.getStringValue() == nil) {} 
   searchName = theEvent.getStringValue();
   searchName = searchName.replaceAll("\\s+", "+");
   println("passed the name " + searchName);
 //  blendMode(SCREEN);
   scraping = new Scraper(searchName);
-  noStroke();
-  fill(#3af9ff);
-  rect(5, 0, 420, 520);
+  render_namefield = false;
+  cp5.remove("type your full name & hit enter");
 }
