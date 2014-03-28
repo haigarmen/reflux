@@ -41,7 +41,7 @@ boolean render_scraper;
 boolean render_progress;
 boolean render_countdown;
 
-boolean timeUp;
+boolean timeUp = false;
 ControlP5 cp5;
 
 TextField tField;
@@ -63,20 +63,16 @@ Scraper scraping;
 String searchName = "haig armen";
 
 
-String time = "010";
-int t;
-int interval = 10;
+Timer timer;
 
 boolean sketchFullScreen() {
   return false;
 }
 
-
 void setup() {
   frame.setBackground(new java.awt.Color(0,0,0));
   size(1280, 960);
   smooth();
-
   video_width = 640;
   video_height = 480;
   render_cam = true;
@@ -84,7 +80,6 @@ void setup() {
   render_namefield = true;
   app_saving = false;
   cp5 = new ControlP5(this);
-
 
   //get a list of available camera modes and list them
   String[] cameras = Capture.list();
@@ -105,7 +100,7 @@ void setup() {
 
 //    capture_img = new PImage(video_width, video_height);
   }
-  tField = new TextField("Press the c key to capture image.", width/2, height/2, 20, 255);
+  tField = new TextField("Press the c key to capture image.", width/2, height/2, 30, 255);
 
   PFont.list();
 //  progBar = new ProgressBar(4000);
@@ -119,6 +114,7 @@ void draw() {
   renderFilteredImage(drawMode);  
   renderTextField();
   renderNameField();
+//  blendMode(SCREEN);
   renderScraper();
   renderCountdown();
 }
@@ -294,8 +290,15 @@ void renderCountdown() {
   // when finished capture cam image
   // then show progress bar while
   // downloading images, displaying filtering image, scrap images and text   
-  // save PDF, show "your poster is printing, it will take a few mins" 
-  displayTimer();
+  // save PDF, show "your poster is printing, it will take a few mins"
+println("passedTime is " + timer.passedTime);
+  if (timer.isFinished()) {
+    println("timer finished");
+    captureCam();
+    render_capture = false;
+    render_poster();
+    render_countdown = false;
+  }
   }
 }
 
@@ -326,20 +329,16 @@ void saveHiResPDF(int scaleFactor, String file) {
   endRecord();
 }
 
-void displayTimer() {
-  if (timeUp == false) { 
-    t = interval-int(millis()/1000);
-    time = nf(t , 3);
-    if(t == 0){
-      println("GAME OVER");
-      timeUp = true;
-      captureCam();
-      render_countdown = false;
-    interval+=10;
-  }
-   text(time, (width/2), (height/2)-100);
-  }
- }
+void render_poster() {
+  println("rendering poster now");
+  render_dither = true;
+  render_scraper = true;
+  
+      drawMode = 1;
+    img = new Ditherer(capture_img, 1);
+  renderFilteredImage(drawMode);
+  renderScraper();
+}   
  
  void controlEvent(ControlEvent theEvent) {
    if (theEvent.isAssignableFrom(Textfield.class)) {
@@ -348,13 +347,12 @@ void displayTimer() {
       +theEvent.getStringValue()
       );
   }
-// 
-//  if (theEvent.getStringValue() == nil) {} 
   searchName = theEvent.getStringValue();
+  if (searchName.equals("")) {
+  searchName = "random people";
+  } 
   searchName = searchName.replaceAll("\\s+", "+");
-  println("passed the name " + searchName);
-//  blendMode(SCREEN);
   scraping = new Scraper(searchName);
-  render_namefield = false;
+
   cp5.remove("type your full name & hit enter");
 }

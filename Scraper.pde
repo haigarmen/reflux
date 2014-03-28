@@ -35,8 +35,8 @@ class Scraper {
     for (int j = 0; j < numberOfImages; j = j+4) {
       //print ("j = " + j);
       JSONArray newResults = new JSONArray();
-
-      json = loadJSONObject("http://moves.haigarmen.com/gimages.php?name="+ searchName +"+vancouver&page="+j);
+// could add +vancouver into search query for local results
+      json = loadJSONObject("http://moves.haigarmen.com/gimages.php?name="+ searchName +"&page="+j);
       JSONObject responseData = json.getJSONObject("responseData");
       newResults = responseData.getJSONArray("results");
 
@@ -45,7 +45,9 @@ class Scraper {
       }
     }
     println(results);
-    render_countdown=true;
+    render_countdown = true;
+      timer = new Timer(5000);
+    timer.start();
   }
 
   void showImages() {
@@ -61,7 +63,7 @@ println("JSON results size is: " + results.size());
           photo = null;
         }
 
-        if (photo != null) { 
+        if ((photo != null) || (photo.width > 0) ) { 
           photoWidth = photo.width;
           photoHeight = photo.height;
           ratio = float(photoWidth) / float(photoHeight);
@@ -71,13 +73,15 @@ println("JSON results size is: " + results.size());
           if (photoWidth > photoHeight) {
             copy(photo, (photoWidth-photoHeight)/2, 0, photoHeight, photoHeight, newX, newY, cropSize, cropSize);
           } 
-          else {
+          else if ((photoHeight > photoWidth) || (photoHeight == photoWidth)) {
             copy(photo, 0, (photoHeight-photoWidth)/2, photoWidth, photoWidth, newX, newY, cropSize, cropSize);
+          } else {
+            println("Garbage image");
           }
           fill(203);
 
           text(title, 500, 100 + (20  * (i+i) ));
-          println(title + ", " + image + "i="+i + ", j=" +numberOfRows);
+          println(title + ", " + image + ", i="+i + ", j=" +numberOfRows);
         }
       }
   }
