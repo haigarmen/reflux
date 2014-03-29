@@ -103,11 +103,13 @@ void setup() {
   else {
     //    println("Available cameras:");
     for (int i = 0; i < cameras.length; i++) {
-      //      println(cameras[i]);
+      println(cameras[i]);
     }
     // The camera can be initialized directly using an 
     // element from the array returned by list():
-    cam = new Capture(this, video_width, video_height, "FaceTime HD Camera"); 
+//    cam = new Capture(this, video_width, video_height, "FaceTime HD Camera");
+    cam = new Capture(this, video_width, video_height, "Built-in iSight");
+     
     cam.start();
 
 //    capture_img = new PImage(video_width, video_height);
