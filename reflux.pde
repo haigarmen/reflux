@@ -14,6 +14,10 @@
 // refine image filter (gridsize)
 // need to escape web entities
  
+// issues
+// 1. textfield disappears in Present Mode
+// 2. copy image function doesn't work for PDF output
+// 3. countdown doesn't show
 
 import processing.pdf.*;
 import java.util.Calendar;
@@ -39,7 +43,10 @@ boolean render_digits;
 boolean render_namefield;
 boolean render_scraper;
 boolean render_progress;
+boolean render_poster;
 boolean render_countdown;
+boolean render_printing;
+boolean render_fadeblack;
 
 boolean timeUp = false;
 ControlP5 cp5;
@@ -48,7 +55,7 @@ TextField tField;
 
 Ditherer img;
 //int gridSize = 10;
-int drawMode = 0;
+int drawMode = 1;
 
 String folder_path  = "output/";
 String file_format  = ".jpg";
@@ -73,6 +80,7 @@ void setup() {
   frame.setBackground(new java.awt.Color(0,0,0));
   size(1280, 960);
   smooth();
+  noStroke();
   video_width = 640;
   video_height = 480;
   render_cam = true;
@@ -111,12 +119,13 @@ void draw() {
   renderCam();
   renderCapture();
   // render different ditherers
-  renderFilteredImage(drawMode);  
+  renderPoster();
   renderTextField();
   renderNameField();
 //  blendMode(SCREEN);
-  renderScraper();
   renderCountdown();
+  renderPrinting();
+  renderFadeBlack();
 }
 
 //wrap any of these in a beginRecord() and endRecord() to save as pdf.
@@ -131,8 +140,7 @@ void keyPressed() {
   case 'd':
     render_capture = false;
     render_dither = true;
-    drawMode = 1;
-    img = new Ditherer(capture_img, 1);
+    img = new Ditherer(capture_img, drawMode);
     break;
   case 's':
     if (render_dither) {
@@ -195,22 +203,20 @@ void keyPressed() {
   }
 }
 
-
-
 void captureCam() {
   if (render_capture) {
     return;
   }
   println("capture image");
   capture_img = cam.get();
-  image(capture_img,0,0);
    pushMatrix();
    scale(-2,2);
    translate(-capture_img.width, 0);
-   image(capture_img, -capture_img.width, 0);
+   image(capture_img, capture_img.width, 0);
    popMatrix();
   render_cam = false;
   cam.stop();
+  img = new Ditherer(capture_img, drawMode);
   render_capture = true;
   tField.setMsg("Press 's' key to save, Press 'v' key to return to video.");
 }
@@ -250,10 +256,9 @@ void renderCapture() {
   }
 }
 
-
 void renderFilteredImage(int drawMode) {
   if (render_dither) {
-    img.filterImage(drawMode);
+      img.filterImage(drawMode);
 //    println("drawing filteredImage again");
   }
 };
@@ -291,14 +296,36 @@ void renderCountdown() {
   // then show progress bar while
   // downloading images, displaying filtering image, scrap images and text   
   // save PDF, show "your poster is printing, it will take a few mins"
-println("passedTime is " + timer.passedTime);
+  println("countDown is " + timer.countDown);
   if (timer.isFinished()) {
     println("timer finished");
     captureCam();
     render_capture = false;
-    render_poster();
+    render_poster= true;
     render_countdown = false;
+    render_fadeblack = true;
   }
+  }
+}
+
+void renderPrinting() {
+  if (render_printing) {
+  // display a message that poster is now printing
+  
+  // save a PDF 
+  
+  }
+}
+
+// fix this fade to black function, it's not really working.
+
+void renderFadeBlack() {
+  if (render_fadeblack) {
+  for (int i = 0; i < 30; i++) {
+  fill(0, 10); // semi-transparent white
+  rect(0,0, width,height);
+  }
+  render_fadeblack = false;
   }
 }
 
@@ -325,19 +352,37 @@ void saveHiResPDF(int scaleFactor, String file) {
   PGraphics pdf = createGraphics(width*scaleFactor, height*scaleFactor, PDF, file);
   beginRecord(pdf);
   pdf.scale(scaleFactor);
-  renderFilteredImage(drawMode);
+  renderPoster();
   endRecord();
 }
 
-void render_poster() {
+void renderPoster() {
+  color a = 0xCC17a1e2;
+  color b = 0xCC000000;
+  color c = 0xAAc50600;
+  
+  if (render_poster) {
   println("rendering poster now");
   render_dither = true;
   render_scraper = true;
-  
-      drawMode = 1;
-    img = new Ditherer(capture_img, 1);
+    blendMode(BLEND);
   renderFilteredImage(drawMode);
-  renderScraper();
+rectMode(CORNER);
+  noStroke();
+  fill(a);
+  rect(0 ,440 ,width ,160);
+//  blendMode(MULTIPLY);
+  fill(b);
+  rect(0 ,600 ,width ,16);
+  fill(c);
+  rect(0 ,616 ,width ,80);
+  fill(255);
+  textFont(tField.greyscaleBasic, 120);
+  textAlign(RIGHT);
+  text((searchName.toUpperCase()), width-20, 570);
+//  blendMode(BLEND);
+//  renderScraper();
+  }
 }   
  
  void controlEvent(ControlEvent theEvent) {

@@ -18,7 +18,7 @@ class Scraper {
   int numberofQueries = ceil(num);
 
   Scraper(String searchName) {
-    println("passed the name " + searchName);
+//    println("passed the name " + searchName);
     // maybe we could add the location dynamically to the search query?
 
     scrapeGoogle(searchName);
@@ -27,7 +27,7 @@ class Scraper {
   void scrapeGoogle(String searchName) {
     searchName = searchName.replaceAll("\\s+", "+"); 
     
-    println("searching google with the name " + searchName);
+//    println("searching google with the name " + searchName);
 
     // this function should load the JSON from Goolge once and store it in an JSONArray called results
     // then the showImages function can loop through that JSONArray and display images & text
@@ -36,7 +36,7 @@ class Scraper {
       //print ("j = " + j);
       JSONArray newResults = new JSONArray();
 // could add +vancouver into search query for local results
-      json = loadJSONObject("http://moves.haigarmen.com/gimages.php?name="+ searchName +"&page="+j);
+      json = loadJSONObject("http://moves.haigarmen.com/gimages.php?name="+ searchName +"+vancouver&page="+j);
       JSONObject responseData = json.getJSONObject("responseData");
       newResults = responseData.getJSONArray("results");
 
@@ -44,18 +44,18 @@ class Scraper {
         results.append(newResults.getJSONObject(k));
       }
     }
-    println(results);
+//    println(results);
     render_countdown = true;
       timer = new Timer(5000);
     timer.start();
   }
 
   void showImages() {
-println("JSON results size is: " + results.size());
+//      println("JSON results size is: " + results.size());
       for (int i = 0; i < results.size(); i++) {
         JSONObject images = results.getJSONObject(i); 
         String title = images.getString("titleNoFormatting");
-        String image = images.getString("unescapedUrl");
+        String image = images.getString("url");
         try {
           photo = loadImage(image);
         }
@@ -63,7 +63,7 @@ println("JSON results size is: " + results.size());
           photo = null;
         }
 
-        if ((photo != null) || (photo.width > 0) ) { 
+        if ((photo != null) || (photo.width <= -1) ) { 
           photoWidth = photo.width;
           photoHeight = photo.height;
           ratio = float(photoWidth) / float(photoHeight);
@@ -81,7 +81,7 @@ println("JSON results size is: " + results.size());
           fill(203);
 
           text(title, 500, 100 + (20  * (i+i) ));
-          println(title + ", " + image + ", i="+i + ", j=" +numberOfRows);
+//          println(title + ", " + image + ", i="+i + ", j=" +numberOfRows);
         }
       }
   }

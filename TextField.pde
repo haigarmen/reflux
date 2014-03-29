@@ -2,6 +2,7 @@ class TextField {
 
 ControlP5 cp5;
 PFont greyscaleBasic;
+PFont greyscaleBold;
 String msg;
 int xPos;
 int yPos;
@@ -10,7 +11,8 @@ int fontColor;
 
 
 public TextField(String inMsg, int x, int y,int fSize,int clr) {
-    greyscaleBasic = loadFont("GreyscaleBasic.vlw");
+    greyscaleBasic = createFont("Greyscale Basic Regular.ttf", 80);
+    greyscaleBold = createFont("Greyscale Basic Bold.ttf", 120);
     msg = inMsg;
     xPos = x;
     yPos = y;

@@ -6,7 +6,7 @@ class Timer {
   
   Timer(int _TotalTime) {
     totalTime = _TotalTime;
-    countDown = int((totalTime - savedTime)/1000);
+    countDown = int((totalTime - passedTime)/1000);
   }
   
   // Starting the timer
@@ -14,7 +14,6 @@ class Timer {
     // When the timer starts it stores the current time in milliseconds.
     savedTime = millis(); 
     println("timer start at" + savedTime);
-    println("countDown at " + countDown);
   }
  
   
