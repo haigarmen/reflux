@@ -311,9 +311,7 @@ void renderCountdown() {
 void renderPrinting() {
   if (render_printing) {
   // display a message that poster is now printing
-  
   // save a PDF 
-  
   }
 }
 
@@ -357,9 +355,9 @@ void saveHiResPDF(int scaleFactor, String file) {
 }
 
 void renderPoster() {
-  color a = 0xCC17a1e2;
-  color b = 0xCC000000;
-  color c = 0xAAc50600;
+  color a = 0xCC17a1e2; // blue
+  color b = 0xCC000000; // black
+  color c = 0xAAc50600; // red
   
   if (render_poster) {
   println("rendering poster now");
@@ -370,8 +368,8 @@ void renderPoster() {
 rectMode(CORNER);
   noStroke();
   fill(a);
+  blendMode(SUBTRACT);
   rect(0 ,440 ,width ,160);
-//  blendMode(MULTIPLY);
   fill(b);
   rect(0 ,600 ,width ,16);
   fill(c);
