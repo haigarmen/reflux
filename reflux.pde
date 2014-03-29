@@ -1,6 +1,8 @@
 /* Reflux Art Installation
  a personal project that captures a photo and grabs images from the web of you
- and creates a printed poster for you to take home
+ and creates a printed poster for you to take home.
+ 
+ possible names: re:self, re:spectacle
  */
 
 //stuff to do:
@@ -47,6 +49,8 @@ boolean render_poster;
 boolean render_countdown;
 boolean render_printing;
 boolean render_fadeblack;
+boolean render_fadefromblack;
+
 
 boolean timeUp = false;
 ControlP5 cp5;
@@ -126,6 +130,7 @@ void draw() {
   renderCountdown();
   renderPrinting();
   renderFadeBlack();
+  renderFadeFromBlack();
 }
 
 //wrap any of these in a beginRecord() and endRecord() to save as pdf.
@@ -149,7 +154,8 @@ void keyPressed() {
     break;
   case 'p':
     if (render_dither) {
-      saveHiResPDF(1, "output/" + timestamp()+".pdf");
+      render_printing=true;
+      renderPrinting();
     }
     break;
   case 'v':
@@ -237,40 +243,42 @@ void saveImage(String filename) {
   restartCam();
 }
 
-void restartCam() {  
+void restartCam() {
   if (render_cam) {
     return;
   }
-
   println("restart cam");
+  render_poster = false;
   render_capture = false;
   render_dither = false;
-
   cam.start();
   render_cam = true;
 }
 
 void renderCapture() {
   if (render_capture) {
-    image(capture_img, 0, 0);
+//  println("rendering captured image");
+  image(capture_img, 0, 0);
   }
 }
 
 void renderFilteredImage(int drawMode) {
   if (render_dither) {
+    println("drawing filtered Image");
       img.filterImage(drawMode);
-//    println("drawing filteredImage again");
   }
 };
 
 void renderTextField() {
   if (render_textfield) {
+  println("rendering textfield");
     tField.display();
   }
 }
 
 void renderNameField() {
   if (render_namefield) {
+    println("rendering name textfield");
     cp5.addTextfield("type your full name & hit enter")
       .setPosition(300, 20)
       .setSize(400, 40)
@@ -291,19 +299,21 @@ void renderScraper() {
 
 void renderCountdown() {
   if (render_countdown) {
-  // show countdown
+
+    // show countdown
+  println("timer is " + timer.passedTime);
   // when finished capture cam image
   // then show progress bar while
   // downloading images, displaying filtering image, scrap images and text   
   // save PDF, show "your poster is printing, it will take a few mins"
-  println("countDown is " + timer.countDown);
   if (timer.isFinished()) {
     println("timer finished");
     captureCam();
     render_capture = false;
     render_poster= true;
+    render_dither = true;
     render_countdown = false;
-    render_fadeblack = true;
+//    render_fadeblack = true;
   }
   }
 }
@@ -311,7 +321,17 @@ void renderCountdown() {
 void renderPrinting() {
   if (render_printing) {
   // display a message that poster is now printing
-  // save a PDF 
+  tField.setMsg("Printing poster now, please wait");  
+  render_textfield = true;
+  // save a PDF
+     if (render_dither) {
+      saveHiResPDF(1, "output/" + timestamp()+".pdf");
+    }
+  // wait for 5 seconds
+    render_printing = false;
+    //
+    
+    restartCam();
   }
 }
 
@@ -324,6 +344,16 @@ void renderFadeBlack() {
   rect(0,0, width,height);
   }
   render_fadeblack = false;
+  }
+}
+
+void renderFadeFromBlack() {
+  if (render_fadefromblack) {
+  for (int i = 10; i <= 0; i--) {
+  fill(0, (i*10)); // semi-transparent white
+  rect(0,0, width,height);
+  }
+  render_fadefromblack = false;
   }
 }
 
@@ -363,7 +393,7 @@ void renderPoster() {
   println("rendering poster now");
   render_dither = true;
   render_scraper = true;
-    blendMode(BLEND);
+  blendMode(BLEND);
   renderFilteredImage(drawMode);
 rectMode(CORNER);
   noStroke();
