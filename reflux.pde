@@ -15,11 +15,15 @@
 // refine layout
 // refine image filter (gridsize)
 // need to escape web entities
- 
+
 // issues
-// 1. textfield disappears in Present Mode
+// 1. textfield disappears in Present Mode (fixed itself)
 // 2. copy image function doesn't work for PDF output
-// 3. countdown doesn't show
+//      a. resize images and see if that PDFs or b. convert images to vectors via ditherer class)
+
+// 3. countdown doesn't show (fixed)
+// 4. printing doesn't reset to Cam - Solved - not quite
+// 5. capture should go to printing (without break)
 
 import processing.pdf.*;
 import java.util.Calendar;
@@ -63,9 +67,9 @@ int drawMode = 1;
 
 String folder_path  = "output/";
 String file_format  = ".jpg";
-int TIMER_DURATION = 1500;
 
 ProgressBar progBar;
+Fader fader1;
 
 // A variable for the frame we grab from the webcam
 Capture cam;
@@ -81,7 +85,7 @@ boolean sketchFullScreen() {
 }
 
 void setup() {
-  frame.setBackground(new java.awt.Color(0,0,0));
+  frame.setBackground(new java.awt.Color(0, 0, 0));
   size(1280, 960);
   smooth();
   noStroke();
@@ -103,36 +107,34 @@ void setup() {
   else {
     //    println("Available cameras:");
     for (int i = 0; i < cameras.length; i++) {
-      println(cameras[i]);
+      //      println(cameras[i]);
     }
-    // The camera can be initialized directly using an 
-    // element from the array returned by list():
-//    cam = new Capture(this, video_width, video_height, "FaceTime HD Camera");
-    cam = new Capture(this, video_width, video_height, "Built-in iSight");
-     
+    // The camera can be initialized directly using an element from the array returned by list():
+    cam = new Capture(this, video_width, video_height, "FaceTime HD Camera");
+    //    cam = new Capture(this, video_width, video_height, "Built-in iSight");
     cam.start();
-
-//    capture_img = new PImage(video_width, video_height);
   }
-  tField = new TextField("Press the c key to capture image.", width/2, height/2, 30, 255);
+  tField = new TextField("Enter your full name and press ENTER", width/2, int(height*.8), 30, 255);
 
-  PFont.list();
-//  progBar = new ProgressBar(4000);
+  //  PFont.list();
+  //  progBar = new ProgressBar(4000);
+  fader1 = new Fader();
+  fader1.showFade = true;
 }
 
 void draw() {
   background(255);
   renderCam();
   renderCapture();
-  // render different ditherers
   renderPoster();
+  renderPrinting();
   renderTextField();
   renderNameField();
-//  blendMode(SCREEN);
   renderCountdown();
-  renderPrinting();
-  renderFadeBlack();
-  renderFadeFromBlack();
+  if (fader1.showFade) {
+    fader1.fadeDown();
+    fader1.draw();
+  }
 }
 
 //wrap any of these in a beginRecord() and endRecord() to save as pdf.
@@ -165,7 +167,7 @@ void keyPressed() {
     tField.setMsg("Press the 'c' key to capture image.");
     break;
   case 'w':
-  println("scraping mode with " + searchName);
+    println("scraping mode with " + searchName);
     scraping = new Scraper(searchName);
     render_scraper = true;
   case '1':
@@ -206,7 +208,8 @@ void keyPressed() {
       }
     }
     if (keyCode == ESC) {
-      key = 0; println("Trapped! Muhaha! ;-)");
+      key = 0; 
+      println("Trapped! Muhaha! ;-)");
     }
   }
 }
@@ -217,11 +220,11 @@ void captureCam() {
   }
   println("capture image");
   capture_img = cam.get();
-   pushMatrix();
-   scale(-2,2);
-   translate(-capture_img.width, 0);
-   image(capture_img, capture_img.width, 0);
-   popMatrix();
+  pushMatrix();
+  scale(-2, 2);
+  translate(-capture_img.width, 0);
+  image(capture_img, capture_img.width, 0);
+  popMatrix();
   render_cam = false;
   cam.stop();
   img = new Ditherer(capture_img, drawMode);
@@ -250,6 +253,9 @@ void restartCam() {
     return;
   }
   println("restart cam");
+  render_textfield = true;
+  render_namefield = true;
+  app_saving = false;
   render_poster = false;
   render_capture = false;
   render_dither = false;
@@ -259,35 +265,35 @@ void restartCam() {
 
 void renderCapture() {
   if (render_capture) {
-//  println("rendering captured image");
-  image(capture_img, 0, 0);
+    //  println("rendering captured image");
+    image(capture_img, 0, 0);
   }
 }
 
 void renderFilteredImage(int drawMode) {
   if (render_dither) {
     println("drawing filtered Image");
-      img.filterImage(drawMode);
+    img.filterImage(drawMode);
   }
 };
 
 void renderTextField() {
   if (render_textfield) {
-  println("rendering textfield");
+    println("rendering textfield");
     tField.display();
   }
 }
 
 void renderNameField() {
   if (render_namefield) {
-    println("rendering name textfield");
-    cp5.addTextfield("type your full name & hit enter")
-      .setPosition(300, 20)
-      .setSize(400, 40)
-      .setFont(tField.greyscaleBasic)
-      .setFocus(true)
-      .setColor(color(203))
-    ;
+    //    println("rendering name textfield");
+    cp5.addTextfield(">>")
+      .setPosition(340, height*.65)
+        .setSize(600, 100)
+          .setFont(tField.greyscaleBasic)
+            .setFocus(true)
+              .setColor(color(203))
+                ;
     textFont(tField.greyscaleBasic);
   }
   render_namefield = false;
@@ -301,39 +307,52 @@ void renderScraper() {
 
 void renderCountdown() {
   if (render_countdown) {
-
     // show countdown
-  println("timer is " + timer.passedTime);
-  // when finished capture cam image
-  // then show progress bar while
-  // downloading images, displaying filtering image, scrap images and text   
-  // save PDF, show "your poster is printing, it will take a few mins"
-  if (timer.isFinished()) {
-    println("timer finished");
-    captureCam();
-    render_capture = false;
-    render_poster= true;
-    render_dither = true;
-    render_countdown = false;
-//    render_fadeblack = true;
-  }
+    int countDown = ((timer.totalTime/1000) - int(timer.passedTime/1000));
+    tField.setMsg("Photo will be taken in");
+    fill(0,100);
+    rectMode(CENTER);
+    rect(width/2, height*.85, 100,160);
+    textSize(120);
+    fill(255);
+    text(countDown, width/2, height*.85);
+    // when finished capture cam image
+    // then show progress bar while
+    // downloading images, displaying filtering image, scrap images and text   
+    // save PDF, show "your poster is printing, it will take a few mins"
+    if (timer.isFinished()) {
+      println("timer finished");
+      captureCam();
+      render_capture = false;
+      render_poster= true;
+      //    render_dither = true;
+      render_countdown = false;
+      render_fadeblack = true;
+    }
   }
 }
 
 void renderPrinting() {
   if (render_printing) {
-  // display a message that poster is now printing
-  tField.setMsg("Printing poster now, please wait");  
-  render_textfield = true;
-  // save a PDF
-     if (render_dither) {
+    // display a message that poster is now printing
+    tField.setMsg("Printing poster now, please wait");  
+    render_textfield = true;
+    // save a PDF
+    if (render_dither) {
       saveHiResPDF(1, "output/" + timestamp()+".pdf");
     }
-  // wait for 5 seconds
-    render_printing = false;
+    // wait for 5 seconds
+
     //
-    
+    render_capture = false;
+    render_dither = false;
+    render_countdown = false;
+    render_printing = false;
+    render_poster = false;
+    render_cam = false;
+
     restartCam();
+    tField.setMsg("Press the 'c' key to capture image.");
   }
 }
 
@@ -341,21 +360,8 @@ void renderPrinting() {
 
 void renderFadeBlack() {
   if (render_fadeblack) {
-  for (int i = 0; i < 30; i++) {
-  fill(0, 10); // semi-transparent white
-  rect(0,0, width,height);
-  }
-  render_fadeblack = false;
-  }
-}
-
-void renderFadeFromBlack() {
-  if (render_fadefromblack) {
-  for (int i = 10; i <= 0; i--) {
-  fill(0, (i*10)); // semi-transparent white
-  rect(0,0, width,height);
-  }
-  render_fadefromblack = false;
+    fader1.showFade = true;
+    render_fadeblack = false;
   }
 }
 
@@ -365,7 +371,7 @@ void renderCam() {
   }
   if (render_cam) {
     pushMatrix();
-    scale(-2,2);
+    scale(-2, 2);
     translate(-cam.width, 0);
     image(cam, 0, 0);
     popMatrix();
@@ -390,44 +396,45 @@ void renderPoster() {
   color a = 0xCC17a1e2; // blue
   color b = 0xCC000000; // black
   color c = 0xAAc50600; // red
-  
+
   if (render_poster) {
-  println("rendering poster now");
-  render_dither = true;
-  render_scraper = true;
-  blendMode(BLEND);
-  renderFilteredImage(drawMode);
-rectMode(CORNER);
-  noStroke();
-  fill(a);
-  blendMode(SUBTRACT);
-  rect(0 ,440 ,width ,160);
-  fill(b);
-  rect(0 ,600 ,width ,16);
-  fill(c);
-  rect(0 ,616 ,width ,80);
-  fill(255);
-  textFont(tField.greyscaleBasic, 120);
-  textAlign(RIGHT);
-  text((searchName.toUpperCase()), width-20, 570);
-//  blendMode(BLEND);
-//  renderScraper();
+    println("rendering poster now");
+    render_dither = true;
+    render_scraper = true;
+    blendMode(BLEND);
+    renderFilteredImage(drawMode);
+    rectMode(CORNER);
+    noStroke();
+    fill(a);
+    //  blendMode(SUBTRACT);
+    rect(0, 440, width, 160);
+    fill(b);
+    rect(0, 600, width, 16);
+    fill(c);
+    rect(0, 616, width, 80);
+    fill(255);
+    textFont(tField.greyscaleBasic, 120);
+    textAlign(RIGHT);
+    text((searchName.toUpperCase()), width-20, 570);
+    blendMode(BLEND);
+    renderScraper();
   }
 }   
- 
- void controlEvent(ControlEvent theEvent) {
-   if (theEvent.isAssignableFrom(Textfield.class)) {
+
+void controlEvent(ControlEvent theEvent) {
+  if (theEvent.isAssignableFrom(Textfield.class)) {
     println("controlEvent: accessing a string from controller '"
       +theEvent.getName()+"': "
       +theEvent.getStringValue()
       );
   }
   searchName = theEvent.getStringValue();
-  if (searchName.equals("")) {
-  searchName = "random people";
+  if (searchName.equals("") || searchName.equals(" ")) {
+    searchName = "random people";
   } 
   searchName = searchName.replaceAll("\\s+", "+");
   scraping = new Scraper(searchName);
 
-  cp5.remove("type your full name & hit enter");
+  cp5.remove(">>");
 }
+

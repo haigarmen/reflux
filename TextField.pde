@@ -30,12 +30,12 @@ public TextField(String inMsg, int x, int y,int fSize,int clr) {
   }
   void display() {
     noStroke();
-    fill(0, 80);
+    fill(0, 255);
     rectMode(CENTER);
-    rect(xPos, yPos, (width*.8), 40);
+    rect(xPos, yPos, 600, 80);
     textFont(greyscaleBasic,fontSize);
     fill(fontColor);
     textAlign(CENTER);
-    text(msg,xPos,yPos);
+    text(msg,xPos,yPos+10);
   }
 }
