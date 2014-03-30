@@ -13,7 +13,7 @@ class Timer {
   void start() {
     // When the timer starts it stores the current time in milliseconds.
     savedTime = millis(); 
-    println("timer start at" + savedTime);
+    println("timer started at " + savedTime);
   }
  
   

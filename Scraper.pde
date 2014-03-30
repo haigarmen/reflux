@@ -51,6 +51,7 @@ class Scraper {
   }
 
   void showImages() {
+    boolean finished;
 //      println("JSON results size is: " + results.size());
       for (int i = 0; i < results.size(); i++) {
         JSONObject images = results.getJSONObject(i); 
@@ -84,6 +85,6 @@ class Scraper {
 //          println(title + ", " + image + ", i="+i + ", j=" +numberOfRows);
         }
       }
+      finished = true;
   }
 }
-

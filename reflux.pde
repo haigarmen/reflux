@@ -24,6 +24,7 @@
 // 3. countdown doesn't show (fixed)
 // 4. printing doesn't reset to Cam - Solved - not quite
 // 5. capture should go to printing (without break)
+// 6. fix the halftone dot density in Ditherer
 
 import processing.pdf.*;
 import java.util.Calendar;
@@ -120,6 +121,7 @@ void setup() {
   //  progBar = new ProgressBar(4000);
   fader1 = new Fader();
   fader1.showFade = true;
+  fader1.fadeDown = true;
 }
 
 void draw() {
@@ -131,10 +133,7 @@ void draw() {
   renderTextField();
   renderNameField();
   renderCountdown();
-  if (fader1.showFade) {
-    fader1.fadeDown();
-    fader1.draw();
-  }
+  renderFade();
 }
 
 //wrap any of these in a beginRecord() and endRecord() to save as pdf.
@@ -279,7 +278,7 @@ void renderFilteredImage(int drawMode) {
 
 void renderTextField() {
   if (render_textfield) {
-    println("rendering textfield");
+    //    println("rendering textfield");
     tField.display();
   }
 }
@@ -310,24 +309,32 @@ void renderCountdown() {
     // show countdown
     int countDown = ((timer.totalTime/1000) - int(timer.passedTime/1000));
     tField.setMsg("Photo will be taken in");
-    fill(0,100);
+    fill(0, 100);
     rectMode(CENTER);
-    rect(width/2, height*.85, 100,160);
+    rect(width/2, height*.85, 100, 160);
     textSize(120);
     fill(255);
     text(countDown, width/2, height*.85);
-    // when finished capture cam image
     // then show progress bar while
     // downloading images, displaying filtering image, scrap images and text   
     // save PDF, show "your poster is printing, it will take a few mins"
     if (timer.isFinished()) {
       println("timer finished");
+      // when timer finished capture cam image
       captureCam();
       render_capture = false;
-      render_poster= true;
-      //    render_dither = true;
       render_countdown = false;
+
+      // fade down to black first
       render_fadeblack = true;
+      // show a scraping web progress bar
+      // then check that scraper.showImages.finished is true
+
+        // then fade up with rendered poster
+      // then save PDF and show msg about poster being printed 
+      render_poster= true;
+
+      // then fade to black and reset
     }
   }
 }
@@ -358,10 +365,17 @@ void renderPrinting() {
 
 // fix this fade to black function, it's not really working.
 
-void renderFadeBlack() {
-  if (render_fadeblack) {
-    fader1.showFade = true;
-    render_fadeblack = false;
+void renderFade() {
+  if (fader1.showFade) {
+    if (fader1.fadeDown) {
+      fader1.fadeUp();
+      fader1.draw();
+    }
+
+    if (fader1.fadeUp) {
+      fader1.fadeDown();
+      fader1.draw();
+    }
   }
 }
 
