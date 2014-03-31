@@ -53,8 +53,8 @@ boolean render_progress;
 boolean render_poster;
 boolean render_countdown;
 boolean render_printing;
-boolean render_fadeblack;
-boolean render_fadefromblack;
+//boolean render_fadeblack;
+//boolean render_fadefromblack;
 
 
 boolean timeUp = false;
@@ -80,6 +80,7 @@ String searchName = "haig armen";
 
 
 Timer timer;
+int startTime = millis();
 
 boolean sketchFullScreen() {
   return false;
@@ -119,7 +120,8 @@ void setup() {
 
   //  PFont.list();
   //  progBar = new ProgressBar(4000);
-  fader1 = new Fader();
+
+  fader1 = new Fader(startTime);
   fader1.showFade = true;
   fader1.fadeDown = true;
 }
@@ -151,12 +153,12 @@ void keyPressed() {
     img = new Ditherer(capture_img, drawMode);
     break;
   case 's':
-    if (render_dither) {
+    if (render_capture) {
       saveImage("output/" + timestamp()+".jpg");
     }
     break;
   case 'p':
-    if (render_dither) {
+    if (render_capture) {
       render_printing=true;
       renderPrinting();
     }
@@ -165,8 +167,8 @@ void keyPressed() {
     restartCam();
     tField.setMsg("Press the 'c' key to capture image.");
     break;
-  case 'w':
-    println("scraping mode with " + searchName);
+  case 'w': // get rid of this so people don't trigger it by mistake when typing names
+    tField.setMsg("scraping mode with " + searchName);
     scraping = new Scraper(searchName);
     render_scraper = true;
   case '1':
@@ -208,7 +210,7 @@ void keyPressed() {
     }
     if (keyCode == ESC) {
       key = 0; 
-      println("Trapped! Muhaha! ;-)");
+      println("Trapped! Muhaha!");
     }
   }
 }
@@ -237,7 +239,7 @@ void saveImage(String filename) {
   }
   println("save image");
 
-  tField.setMsg("SAVING...");
+  tField.setMsg("Saving poster JPG");
   //  save_msg_timer.start();
   app_saving = true;
 
@@ -265,7 +267,12 @@ void restartCam() {
 void renderCapture() {
   if (render_capture) {
     //  println("rendering captured image");
+    pushMatrix();
+    scale(-2, 2);
+    translate(-capture_img.width, 0);
     image(capture_img, 0, 0);
+    popMatrix();
+    //    image(capture_img, 0, 0);
   }
 }
 
@@ -322,18 +329,25 @@ void renderCountdown() {
       println("timer finished");
       // when timer finished capture cam image
       captureCam();
-      render_capture = false;
+      render_capture = true;
       render_countdown = false;
 
       // fade down to black first
-      render_fadeblack = true;
+      startTime = millis();
+      fader1 = new Fader(startTime);      
+      fader1.showFade = true;
+      fader1.fadeDown = false;
+      fader1.fadeUp = true;
+          tField.setMsg("Scraping the web for the name " + searchName);
       // show a scraping web progress bar
       // then check that scraper.showImages.finished is true
 
         // then fade up with rendered poster
       // then save PDF and show msg about poster being printed 
-      render_poster= true;
-
+      if (fader1.showFade != true) {
+        println("triggered poster rendering");
+        render_poster= true;
+      }
       // then fade to black and reset
     }
   }
@@ -367,6 +381,7 @@ void renderPrinting() {
 
 void renderFade() {
   if (fader1.showFade) {
+
     if (fader1.fadeDown) {
       fader1.fadeUp();
       fader1.draw();
