@@ -43,10 +43,6 @@ boolean render_capture;
 boolean render_textfield;
 boolean app_saving;
 boolean render_dither;
-boolean render_halftone;
-boolean render_halftoneSq;
-boolean render_maze;
-boolean render_digits;
 boolean render_namefield;
 boolean render_scraper;
 boolean render_progress;
@@ -88,7 +84,8 @@ boolean sketchFullScreen() {
 
 void setup() {
   frame.setBackground(new java.awt.Color(0, 0, 0));
-  size(1280, 960);
+  //  size(1280, 960);
+  size(1024, 768);
   smooth();
   noStroke();
   video_width = 640;
@@ -132,26 +129,16 @@ void draw() {
   renderCapture();
   renderPoster();
   renderPrinting();
+  renderFade();
   renderTextField();
   renderNameField();
   renderCountdown();
-  renderFade();
 }
 
 //wrap any of these in a beginRecord() and endRecord() to save as pdf.
 
 void keyPressed() {
   switch(key) {
-  case 'c':
-    captureCam();
-    render_capture = true;
-    render_dither = false;
-    break;
-  case 'd':
-    render_capture = false;
-    render_dither = true;
-    img = new Ditherer(capture_img, drawMode);
-    break;
   case 's':
     if (render_capture) {
       saveImage("output/" + timestamp()+".jpg");
@@ -159,18 +146,14 @@ void keyPressed() {
     break;
   case 'p':
     if (render_capture) {
-      render_printing=true;
-      renderPrinting();
+      render_poster = true;
+      render_printing = true;
     }
     break;
   case 'v':
     restartCam();
     tField.setMsg("Press the 'c' key to capture image.");
     break;
-  case 'w': // get rid of this so people don't trigger it by mistake when typing names
-    tField.setMsg("scraping mode with " + searchName);
-    scraping = new Scraper(searchName);
-    render_scraper = true;
   case '1':
     drawMode = 1;
     break;
@@ -224,7 +207,7 @@ void captureCam() {
   pushMatrix();
   scale(-2, 2);
   translate(-capture_img.width, 0);
-  image(capture_img, capture_img.width, 0);
+  image(capture_img, 0, 0);
   popMatrix();
   render_cam = false;
   cam.stop();
@@ -260,6 +243,7 @@ void restartCam() {
   render_poster = false;
   render_capture = false;
   render_dither = false;
+  
   cam.start();
   render_cam = true;
 }
@@ -278,7 +262,7 @@ void renderCapture() {
 
 void renderFilteredImage(int drawMode) {
   if (render_dither) {
-    println("drawing filtered Image");
+    //    println("drawing filtered Image");
     img.filterImage(drawMode);
   }
 };
@@ -316,39 +300,27 @@ void renderCountdown() {
     // show countdown
     int countDown = ((timer.totalTime/1000) - int(timer.passedTime/1000));
     tField.setMsg("Photo will be taken in");
-    fill(0, 100);
+    fill(0);
     rectMode(CENTER);
-    rect(width/2, height*.85, 100, 160);
+    rect(width*.65, height*.85, 100, 130);
     textSize(120);
     fill(255);
-    text(countDown, width/2, height*.85);
+    text(countDown, width*.65, height*.85);
     // then show progress bar while
     // downloading images, displaying filtering image, scrap images and text   
     // save PDF, show "your poster is printing, it will take a few mins"
     if (timer.isFinished()) {
-      println("timer finished");
+      //      println("timer finished");
       // when timer finished capture cam image
       captureCam();
       render_capture = true;
       render_countdown = false;
-
+      tField.setMsg("Scraping the web for the name " + searchName);
       // fade down to black first
       startTime = millis();
       fader1 = new Fader(startTime);      
       fader1.showFade = true;
-      fader1.fadeDown = false;
       fader1.fadeUp = true;
-          tField.setMsg("Scraping the web for the name " + searchName);
-      // show a scraping web progress bar
-      // then check that scraper.showImages.finished is true
-
-        // then fade up with rendered poster
-      // then save PDF and show msg about poster being printed 
-      if (fader1.showFade != true) {
-        println("triggered poster rendering");
-        render_poster= true;
-      }
-      // then fade to black and reset
     }
   }
 }
@@ -359,7 +331,8 @@ void renderPrinting() {
     tField.setMsg("Printing poster now, please wait");  
     render_textfield = true;
     // save a PDF
-    if (render_dither) {
+    if (fader1.posterNow) {
+      saveImage("output/" + timestamp()+".jpg");
       saveHiResPDF(1, "output/" + timestamp()+".pdf");
     }
     // wait for 5 seconds
@@ -371,6 +344,7 @@ void renderPrinting() {
     render_printing = false;
     render_poster = false;
     render_cam = false;
+    fader1.posterNow = false;
 
     restartCam();
     tField.setMsg("Press the 'c' key to capture image.");
@@ -426,8 +400,9 @@ void renderPoster() {
   color b = 0xCC000000; // black
   color c = 0xAAc50600; // red
 
-  if (render_poster) {
+  if (fader1.posterNow) {
     println("rendering poster now");
+    render_capture = false;
     render_dither = true;
     render_scraper = true;
     blendMode(BLEND);
@@ -445,11 +420,36 @@ void renderPoster() {
     textFont(tField.greyscaleBasic, 120);
     textAlign(RIGHT);
     text((searchName.toUpperCase()), width-20, 570);
+    /// smaller type
+    text("Search Result Count: ", width-20, 470);
+    // larger type
+    text((scraping.resultCount), width-20, 500);
     blendMode(BLEND);
     renderScraper();
+    startPrinting();
+      // show a scraping web progress bar
+      // then check that scraper.showImages.finished is true
+      // then fade up with rendered poster
+      //      render_poster=true;
+      // then save PDF and show msg about poster being printed 
+      // then fade to black and reset
+
+    
   }
 }   
 
+void startPrinting() {
+    if (scraping.finished) {
+      println("printing time");
+      render_printing = true;
+
+      // fade down to black first
+      startTime = millis();
+      fader1 = new Fader(startTime);      
+      fader1.showFade = true;
+      fader1.fadeUp = true;
+    }
+}
 void controlEvent(ControlEvent theEvent) {
   if (theEvent.isAssignableFrom(Textfield.class)) {
     println("controlEvent: accessing a string from controller '"

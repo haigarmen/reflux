@@ -1,5 +1,5 @@
 class Fader {
-  int alphavalue;
+  int alphavalue = 255;
   int starttime;
   int delaytime = 9255;
   int curtime;
@@ -9,17 +9,17 @@ class Fader {
   float calc_alpha;
 
   boolean showFade;
-
   boolean fadeUp;
   boolean fadeDown;
-
-
+  boolean posterNow;
+  boolean printNow;
+  
   Fader(int startTime) {
     starttime = startTime;
   }
   void draw() {
     if (showFade) {
-//      println("fade alpha is " + alphavalue);
+    println("fade alpha is " + alphavalue);
       fill(0, alphavalue);
       rectMode(CORNER);
       rect(0, 0, width, height);
@@ -41,8 +41,9 @@ class Fader {
       println("alphavalue reached 0, resetting now");
       count_down = 0; 
       count_up = delaytime;
-      fadeDown = true;
       showFade = false;
+      fadeDown = true;
+      printNow = true;
     } //for visual readout purposes only. ignoreable.
   }
 
@@ -60,11 +61,12 @@ class Fader {
     }   //some precision is lost from float to int, so i reset these
 
     if (alphavalue == 255) {
-      println("alphavalue reached 255, resetting now");
+      println("alphavalue reached 255, holy shit");
+      posterNow = true;
       count_down = 0; 
       count_up = delaytime;
-      fadeDown = true;
       showFade = false;
+      fadeDown = true;
     } //for visual readout purposes only. ignoreable.
   }
 }
