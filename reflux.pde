@@ -84,8 +84,9 @@ boolean sketchFullScreen() {
 
 void setup() {
   frame.setBackground(new java.awt.Color(0, 0, 0));
-  //  size(1280, 960);
-  size(1024, 768);
+  size(1920,1440);
+//  size(1280, 960);
+//  size(1024, 768);
   smooth();
   noStroke();
   video_width = 640;
@@ -109,8 +110,8 @@ void setup() {
       //      println(cameras[i]);
     }
     // The camera can be initialized directly using an element from the array returned by list():
-    cam = new Capture(this, video_width, video_height, "FaceTime HD Camera");
-    //    cam = new Capture(this, video_width, video_height, "Built-in iSight");
+//    cam = new Capture(this, video_width, video_height, "FaceTime HD Camera");
+      cam = new Capture(this, video_width, video_height, "Built-in iSight");
     cam.start();
   }
   tField = new TextField("Enter your full name and press ENTER", width/2, int(height*.8), 30, 255);
@@ -205,7 +206,8 @@ void captureCam() {
   println("capture image");
   capture_img = cam.get();
   pushMatrix();
-  scale(-2, 2);
+//  scale(-2, 2);
+  scale(-3, 3);
   translate(-capture_img.width, 0);
   image(capture_img, 0, 0);
   popMatrix();
@@ -252,7 +254,8 @@ void renderCapture() {
   if (render_capture) {
     //  println("rendering captured image");
     pushMatrix();
-    scale(-2, 2);
+//  scale(-2, 2);
+  scale(-3, 3);
     translate(-capture_img.width, 0);
     image(capture_img, 0, 0);
     popMatrix();
@@ -374,7 +377,8 @@ void renderCam() {
   }
   if (render_cam) {
     pushMatrix();
-    scale(-2, 2);
+//  scale(-2, 2);
+  scale(-3, 3);
     translate(-cam.width, 0);
     image(cam, 0, 0);
     popMatrix();
