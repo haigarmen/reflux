@@ -86,8 +86,8 @@ boolean sketchFullScreen() {
 
 void setup() {
   frame.setBackground(new java.awt.Color(0, 0, 0));
-  size(1280, 960);
-//  size(1920, 1440);
+//  size(1280, 960);
+  size(1920, 1440);
   smooth();
   noStroke();
   video_width = 640;
