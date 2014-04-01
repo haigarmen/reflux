@@ -52,6 +52,7 @@ boolean render_printing;
 //boolean render_fadeblack;
 //boolean render_fadefromblack;
 
+boolean portrait = false;
 
 boolean timeUp = false;
 ControlP5 cp5;
@@ -79,15 +80,14 @@ Timer timer;
 int startTime = millis();
 
 boolean sketchFullScreen() {
-  return true;
+  return false;
 }
 
 
 void setup() {
   frame.setBackground(new java.awt.Color(0, 0, 0));
-  //  size(1280, 960);
-//  size(1024, 768);
-  size(1920, 1440);
+  size(1280, 960);
+//  size(1920, 1440);
   smooth();
   noStroke();
   video_width = 640;
@@ -100,7 +100,6 @@ void setup() {
 
   //get a list of available camera modes and list them
   String[] cameras = Capture.list();
-
   if (cameras.length == 0) {
     //    println("There are no cameras available for capture.");
     exit();
@@ -108,16 +107,14 @@ void setup() {
   else {
     //    println("Available cameras:");
     for (int i = 0; i < cameras.length; i++) {
-      //      println(cameras[i]);
+//      println(cameras[i]);
     }
     // The camera can be initialized directly using an element from the array returned by list():
 //    cam = new Capture(this, video_width, video_height, "FaceTime HD Camera");
-      cam = new Capture(this, video_width, video_height, "Built-in iSight");
+//      cam = new Capture(this, video_width, video_height, "Built-in iSight");
+      cam = new Capture(this, video_width, video_height, "Microsoft® LifeCam Show(TM)");
     cam.start();
   }
-  tField = new TextField("Enter your full name and press ENTER", height/2, -width/8, 30, 255);
-
-  //  PFont.list();
   //  progBar = new ProgressBar(4000);
 
   fader1 = new Fader(startTime+2000);
@@ -132,12 +129,9 @@ void draw() {
   renderPoster();
   renderPrinting();
   renderFade();
-  pushMatrix();
-    rotate(1.57079633);
   renderTextField();
   renderNameField();
   renderCountdown();
-  popMatrix();
 }
 
 //wrap any of these in a beginRecord() and endRecord() to save as pdf.
@@ -278,7 +272,15 @@ void renderFilteredImage(int drawMode) {
 void renderTextField() {
   if (render_textfield) {
     //    println("rendering textfield");
+if (portrait) {
+  tField = new TextField("Enter your full name and press ENTER", height/2, -width/8, 30, 255);
+    pushMatrix();
+    rotate(1.57079633);
     tField.display();
+    popMatrix();
+}
+  tField = new TextField("Enter your full name and press ENTER", width/2, int(height*.6), 30, 255);
+  tField.display();
   }
 }
 
@@ -323,12 +325,17 @@ void renderCountdown() {
       captureCam();
       render_capture = true;
       render_countdown = false;
-      tField.setMsg("Scraping the web for the name " + searchName);
+      tField.setMsg("Scraping the web: " + searchName + "press P for poster");
+      
+      
       // fade down to black first
-      startTime = millis();
+// dropping fadeOut for now
+/*
+startTime = millis();
       fader1 = new Fader(startTime);      
       fader1.showFade = true;
       fader1.fadeUp = true;
+*/
     }
   }
 }
@@ -346,7 +353,7 @@ void renderPrinting() {
     }
     // wait for 5 seconds
 
-    //
+    /*
     render_capture = false;
     render_dither = false;
     render_countdown = false;
@@ -354,9 +361,10 @@ void renderPrinting() {
     render_poster = false;
     render_cam = false;
     fader1.posterNow = false;
+    */
 
-    restartCam();
-    tField.setMsg("Press the 'c' key to capture image.");
+//    restartCam();
+//    tField.setMsg("Press the 'c' key to capture image.");
   }
 }
 
