@@ -86,8 +86,8 @@ boolean sketchFullScreen() {
 
 void setup() {
   frame.setBackground(new java.awt.Color(0, 0, 0));
-//  size(1280, 960);
-  size(1920, 1440);
+  size(1280, 960);
+  //  size(1920, 1440);
   smooth();
   noStroke();
   video_width = 640;
@@ -107,14 +107,24 @@ void setup() {
   else {
     //    println("Available cameras:");
     for (int i = 0; i < cameras.length; i++) {
-//      println(cameras[i]);
+      //      println(cameras[i]);
     }
     // The camera can be initialized directly using an element from the array returned by list():
-//    cam = new Capture(this, video_width, video_height, "FaceTime HD Camera");
-//      cam = new Capture(this, video_width, video_height, "Built-in iSight");
-      cam = new Capture(this, video_width, video_height, "Microsoft® LifeCam Show(TM)");
+    cam = new Capture(this, video_width, video_height, "FaceTime HD Camera");
+    //      cam = new Capture(this, video_width, video_height, "Built-in iSight");
+    //      cam = new Capture(this, video_width, video_height, "Microsoft® LifeCam Show(TM)");
     cam.start();
   }
+  if (portrait) {
+    tField = new TextField("Enter your full name and press ENTER", height/2, width/8, 30, 255);
+    pushMatrix();
+    rotate(1.57079633);
+    tField.display();
+    popMatrix();
+  } else {
+  tField = new TextField("Enter your full name and press ENTER", width/2, int(height*.6), 30, 255);
+  }
+  
   //  progBar = new ProgressBar(4000);
 
   fader1 = new Fader(startTime+2000);
@@ -128,10 +138,10 @@ void draw() {
   renderCapture();
   renderPoster();
   renderPrinting();
-  renderFade();
   renderTextField();
   renderNameField();
   renderCountdown();
+  renderFade();
 }
 
 //wrap any of these in a beginRecord() and endRecord() to save as pdf.
@@ -205,8 +215,8 @@ void captureCam() {
   println("capture image");
   capture_img = cam.get();
   pushMatrix();
-//  scale(-2, 2);
-    scale(-3, 3);
+  //  scale(-2, 2);
+  scale(-3, 3);
   translate(-capture_img.width, 0);
   image(capture_img, 0, 0);
   popMatrix();
@@ -244,7 +254,7 @@ void restartCam() {
   render_poster = false;
   render_capture = false;
   render_dither = false;
-  
+
   cam.start();
   render_cam = true;
 }
@@ -253,7 +263,7 @@ void renderCapture() {
   if (render_capture) {
     //  println("rendering captured image");
     pushMatrix();
-//    scale(-2, 2);
+    //    scale(-2, 2);
     scale(-3, 3);
     translate(-capture_img.width, 0);
     image(capture_img, 0, 0);
@@ -272,15 +282,7 @@ void renderFilteredImage(int drawMode) {
 void renderTextField() {
   if (render_textfield) {
     //    println("rendering textfield");
-if (portrait) {
-  tField = new TextField("Enter your full name and press ENTER", height/2, -width/8, 30, 255);
-    pushMatrix();
-    rotate(1.57079633);
     tField.display();
-    popMatrix();
-}
-  tField = new TextField("Enter your full name and press ENTER", width/2, int(height*.6), 30, 255);
-  tField.display();
   }
 }
 
@@ -312,10 +314,10 @@ void renderCountdown() {
     tField.setMsg("Photo will be taken in");
     fill(0);
     rectMode(CENTER);
-    rect(width/2, -height/7, 100, 130);
+    rect(width/2, height/7, 100, 130);
     textSize(120);
     fill(255);
-    text(countDown, width/2, -height/7);
+    text(countDown, width/2, height/7);
     // then show progress bar while
     // downloading images, displaying filtering image, scrap images and text   
     // save PDF, show "your poster is printing, it will take a few mins"
@@ -325,17 +327,14 @@ void renderCountdown() {
       captureCam();
       render_capture = true;
       render_countdown = false;
-      tField.setMsg("Scraping the web: " + searchName + "press P for poster");
-      
-      
+      tField.setMsg("Scraping the web: " + searchName + ", press P for poster");
+
+
       // fade down to black first
-// dropping fadeOut for now
-/*
-startTime = millis();
+      startTime = millis();
       fader1 = new Fader(startTime);      
       fader1.showFade = true;
       fader1.fadeUp = true;
-*/
     }
   }
 }
@@ -355,16 +354,16 @@ void renderPrinting() {
 
     /*
     render_capture = false;
-    render_dither = false;
-    render_countdown = false;
-    render_printing = false;
-    render_poster = false;
-    render_cam = false;
-    fader1.posterNow = false;
-    */
+     render_dither = false;
+     render_countdown = false;
+     render_printing = false;
+     render_poster = false;
+     render_cam = false;
+     fader1.posterNow = false;
+     */
 
-//    restartCam();
-//    tField.setMsg("Press the 'c' key to capture image.");
+    //    restartCam();
+    //    tField.setMsg("Press the 'c' key to capture image.");
   }
 }
 
@@ -417,7 +416,7 @@ void renderPoster() {
   color b = 0xCC000000; // black
   color c = 0xAAc50600; // red
 
-  if (fader1.posterNow) {
+  if (render_poster) {
     println("rendering poster now");
     render_capture = false;
     render_dither = true;
@@ -434,38 +433,41 @@ void renderPoster() {
     fill(c);
     rect(0, 616, width, 80);
     fill(255);
-    textFont(tField.greyscaleBasic, 120);
+    textFont(tField.greyscaleBasic, 60);
     textAlign(RIGHT);
     text((searchName.toUpperCase()), width-20, 570);
     /// smaller type
+    textFont(tField.greyscaleBasic, 20);
     text("Search Result Count: ", width-20, 470);
     // larger type
+    textFont(tField.greyscaleBasic, 40);
     text((scraping.resultCount), width-20, 500);
     blendMode(BLEND);
-    renderScraper();
-    startPrinting();
-      // show a scraping web progress bar
-      // then check that scraper.showImages.finished is true
-      // then fade up with rendered poster
-      //      render_poster=true;
-      // then save PDF and show msg about poster being printed 
-      // then fade to black and reset
-
     
+    renderScraper();
+    
+    fader1.showFade = false;
+//    startPrinting();
+    // show a scraping web progress bar
+    // then check that scraper.showImages.finished is true
+    // then fade up with rendered poster
+    //      render_poster=true;
+    // then save PDF and show msg about poster being printed 
+    // then fade to black and reset
   }
 }   
 
 void startPrinting() {
-    if (scraping.finished) {
-      println("printing time");
-      render_printing = true;
+  if (scraping.finished) {
+    println("printing time");
+    render_printing = true;
 
-      // fade down to black first
-      startTime = millis();
-      fader1 = new Fader(startTime);      
-      fader1.showFade = true;
-      fader1.fadeUp = true;
-    }
+    // fade down to black first
+    startTime = millis();
+    fader1 = new Fader(startTime);      
+    fader1.showFade = true;
+    fader1.fadeUp = true;
+  }
 }
 void controlEvent(ControlEvent theEvent) {
   if (theEvent.isAssignableFrom(Textfield.class)) {
