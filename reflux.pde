@@ -30,6 +30,7 @@ import processing.pdf.*;
 import java.util.Calendar;
 import processing.video.*;
 import controlP5.*;
+import java.awt.Toolkit;
 
 
 boolean savePDF = false;
@@ -82,6 +83,7 @@ boolean sketchFullScreen() {
   return false;
 }
 
+
 void setup() {
   frame.setBackground(new java.awt.Color(0, 0, 0));
   //  size(1280, 960);
@@ -118,7 +120,7 @@ void setup() {
   //  PFont.list();
   //  progBar = new ProgressBar(4000);
 
-  fader1 = new Fader(startTime);
+  fader1 = new Fader(startTime+2000);
   fader1.showFade = true;
   fader1.fadeDown = true;
 }

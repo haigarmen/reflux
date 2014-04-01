@@ -63,12 +63,14 @@ class Scraper {
       String title = images.getString("titleNoFormatting");
       String image = images.getString("url");
       try {
+        String testImage = image.toLowerCase();
+        if ( testImage.endsWith("jpg") || testImage.endsWith("gif") || testImage.endsWith("tga") || testImage.endsWith("png")) {
         photo = loadImage(image);
+        }
       }
       catch (Exception e) {
         photo = null;
       }
-
       if ((photo != null) || (photo.width <= -1) ) { 
         photoWidth = photo.width;
         photoHeight = photo.height;
