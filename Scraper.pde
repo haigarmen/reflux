@@ -57,16 +57,16 @@ class Scraper {
   }
 
   void showImages() {
-    //      println("JSON results size is: " + results.size());
+    println("JSON results size is: " + results.size());
     for (int i = 0; i < results.size(); i++) {
       JSONObject images = results.getJSONObject(i); 
       String title = images.getString("titleNoFormatting");
       String image = images.getString("url");
       try {
-        String testImage = image.toLowerCase();
-        if ( testImage.endsWith("jpg") || testImage.endsWith("gif") || testImage.endsWith("tga") || testImage.endsWith("png")) {
+//        String testImage = image.toLowerCase();
+//        if ( testImage.endsWith("jpg") || testImage.endsWith("gif") || testImage.endsWith("tga") || testImage.endsWith("png")) {
         photo = loadImage(image);
-        }
+//        }
       }
       catch (Exception e) {
         photo = null;
@@ -90,7 +90,7 @@ class Scraper {
         fill(203);
         textSize(14);
         text(title, 500, 100 + (20  * (i+i) ));
-        //          println(title + ", " + image + ", i="+i + ", j=" +numberOfRows);
+        println(title + ", " + image + ", i="+i + ", j=" +numberOfRows);
       }
     }
 //    println("finished is set to true");

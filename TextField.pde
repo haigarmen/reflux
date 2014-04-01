@@ -30,7 +30,7 @@ public TextField(String inMsg, int x, int y,int fSize,int clr) {
   }
   void display() {
     noStroke();
-    fill(0, 255);
+    fill(0, 200);
     rectMode(CENTER);
     rect(xPos, yPos, 600, 80);
     textFont(greyscaleBasic,fontSize);

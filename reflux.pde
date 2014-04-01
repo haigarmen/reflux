@@ -44,13 +44,11 @@ boolean render_textfield;
 boolean app_saving;
 boolean render_dither;
 boolean render_namefield;
-boolean render_scraper;
 boolean render_progress;
 boolean render_poster;
 boolean render_countdown;
 boolean render_printing;
-//boolean render_fadeblack;
-//boolean render_fadefromblack;
+boolean render_scraper;
 
 boolean portrait = false;
 
@@ -121,10 +119,11 @@ void setup() {
     rotate(1.57079633);
     tField.display();
     popMatrix();
-  } else {
-  tField = new TextField("Enter your full name and press ENTER", width/2, int(height*.6), 30, 255);
+  } 
+  else {
+    tField = new TextField("Enter your full name and press ENTER", width/2, int(height*.6), 30, 255);
   }
-  
+
   //  progBar = new ProgressBar(4000);
 
   fader1 = new Fader(startTime+2000);
@@ -138,10 +137,10 @@ void draw() {
   renderCapture();
   renderPoster();
   renderPrinting();
+  renderFade();
   renderTextField();
   renderNameField();
   renderCountdown();
-  renderFade();
 }
 
 //wrap any of these in a beginRecord() and endRecord() to save as pdf.
@@ -157,7 +156,7 @@ void keyPressed() {
     if (render_capture) {
       render_poster = true;
       render_printing = true;
-      saveHiResPDF(4, "output/" + timestamp()+".pdf");
+      //      saveHiResPDF(4, "output/" + timestamp()+".pdf");
     }
     break;
   case 'v':
@@ -327,6 +326,7 @@ void renderCountdown() {
       captureCam();
       render_capture = true;
       render_countdown = false;
+      //      tField.setMsg("Scraping the web: " + searchName + ", press P for poster");
       tField.setMsg("Scraping the web: " + searchName + ", press P for poster");
 
 
@@ -335,6 +335,7 @@ void renderCountdown() {
       fader1 = new Fader(startTime);      
       fader1.showFade = true;
       fader1.fadeUp = true;
+      // after fadeDown trigger
     }
   }
 }
@@ -345,11 +346,10 @@ void renderPrinting() {
     tField.setMsg("Printing poster now, please wait");  
     render_textfield = true;
     // save a PDF
-    if (fader1.posterNow) {
-      println("print files saved");
-      saveImage("output/" + timestamp()+".jpg");
-      saveHiResPDF(1, "output/" + timestamp()+".pdf");
-    }
+    println("print file saved");
+    //      saveImage("output/" + timestamp()+".jpg");
+    saveHiResPDF(1, "output/" + timestamp()+".pdf");
+    render_printing = false;
     // wait for 5 seconds
 
     /*
@@ -371,12 +371,10 @@ void renderPrinting() {
 
 void renderFade() {
   if (fader1.showFade) {
-
     if (fader1.fadeDown) {
       fader1.fadeUp();
       fader1.draw();
     }
-
     if (fader1.fadeUp) {
       fader1.fadeDown();
       fader1.draw();
@@ -443,11 +441,11 @@ void renderPoster() {
     textFont(tField.greyscaleBasic, 40);
     text((scraping.resultCount), width-20, 500);
     blendMode(BLEND);
-    
-    renderScraper();
-    
+    tField.setMsg("rendering poster now");
+    render_scraper=true;
+
     fader1.showFade = false;
-//    startPrinting();
+    //    startPrinting();
     // show a scraping web progress bar
     // then check that scraper.showImages.finished is true
     // then fade up with rendered poster
@@ -463,10 +461,12 @@ void startPrinting() {
     render_printing = true;
 
     // fade down to black first
+    /*
     startTime = millis();
-    fader1 = new Fader(startTime);      
-    fader1.showFade = true;
-    fader1.fadeUp = true;
+     fader1 = new Fader(startTime);      
+     fader1.showFade = true;
+     fader1.fadeUp = true;
+     */
   }
 }
 void controlEvent(ControlEvent theEvent) {
