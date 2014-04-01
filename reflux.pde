@@ -30,8 +30,6 @@ import processing.pdf.*;
 import java.util.Calendar;
 import processing.video.*;
 import controlP5.*;
-import java.awt.Toolkit;
-
 
 boolean savePDF = false;
 PImage capture_img;
@@ -80,14 +78,15 @@ Timer timer;
 int startTime = millis();
 
 boolean sketchFullScreen() {
-  return false;
+  return true;
 }
 
 
 void setup() {
   frame.setBackground(new java.awt.Color(0, 0, 0));
   //  size(1280, 960);
-  size(1024, 768);
+//  size(1024, 768);
+  size(1920, 1440);
   smooth();
   noStroke();
   video_width = 640;
@@ -111,8 +110,8 @@ void setup() {
       //      println(cameras[i]);
     }
     // The camera can be initialized directly using an element from the array returned by list():
-    cam = new Capture(this, video_width, video_height, "FaceTime HD Camera");
-    //    cam = new Capture(this, video_width, video_height, "Built-in iSight");
+//    cam = new Capture(this, video_width, video_height, "FaceTime HD Camera");
+      cam = new Capture(this, video_width, video_height, "Built-in iSight");
     cam.start();
   }
   tField = new TextField("Enter your full name and press ENTER", width/2, int(height*.8), 30, 255);
