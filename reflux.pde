@@ -17,7 +17,7 @@
 // need to escape web entities
 
 // issues
-// 1. textfield disappears in Present Mode (fixed itself)
+// 1. textfield disappears in Present Mode (fixed)
 // 2. copy image function doesn't work for PDF output
 //      a. resize images and see if that PDFs or b. convert images to vectors via ditherer class)
 
@@ -25,6 +25,7 @@
 // 4. printing doesn't reset to Cam - Solved - not quite
 // 5. capture should go to printing (without break)
 // 6. fix the halftone dot density in Ditherer
+
 
 import processing.pdf.*;
 import java.util.Calendar;
@@ -206,7 +207,8 @@ void captureCam() {
   println("capture image");
   capture_img = cam.get();
   pushMatrix();
-  scale(-2, 2);
+//  scale(-2, 2);
+    scale(-3, 3);
   translate(-capture_img.width, 0);
   image(capture_img, 0, 0);
   popMatrix();
@@ -253,7 +255,8 @@ void renderCapture() {
   if (render_capture) {
     //  println("rendering captured image");
     pushMatrix();
-    scale(-2, 2);
+//    scale(-2, 2);
+    scale(-3, 3);
     translate(-capture_img.width, 0);
     image(capture_img, 0, 0);
     popMatrix();
@@ -375,7 +378,7 @@ void renderCam() {
   }
   if (render_cam) {
     pushMatrix();
-    scale(-2, 2);
+    scale(-3, 3);
     translate(-cam.width, 0);
     image(cam, 0, 0);
     popMatrix();

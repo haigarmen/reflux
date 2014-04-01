@@ -61,7 +61,7 @@ class Fader {
     }   //some precision is lost from float to int, so i reset these
 
     if (alphavalue == 255) {
-      println("alphavalue reached 255, holy shit");
+      println("alphavalue reached 255");
       posterNow = true;
       count_down = 0; 
       count_up = delaytime;
