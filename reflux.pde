@@ -115,7 +115,7 @@ void setup() {
       cam = new Capture(this, video_width, video_height, "Built-in iSight");
     cam.start();
   }
-  tField = new TextField("Enter your full name and press ENTER", width/2, int(height*.8), 30, 255);
+  tField = new TextField("Enter your full name and press ENTER", height/2, -width/8, 30, 255);
 
   //  PFont.list();
   //  progBar = new ProgressBar(4000);
@@ -132,9 +132,12 @@ void draw() {
   renderPoster();
   renderPrinting();
   renderFade();
+  pushMatrix();
+    rotate(1.57079633);
   renderTextField();
   renderNameField();
   renderCountdown();
+  popMatrix();
 }
 
 //wrap any of these in a beginRecord() and endRecord() to save as pdf.
@@ -150,6 +153,7 @@ void keyPressed() {
     if (render_capture) {
       render_poster = true;
       render_printing = true;
+      saveHiResPDF(4, "output/" + timestamp()+".pdf");
     }
     break;
   case 'v':
@@ -207,8 +211,13 @@ void captureCam() {
   println("capture image");
   capture_img = cam.get();
   pushMatrix();
+<<<<<<< HEAD
 //  scale(-2, 2);
     scale(-3, 3);
+=======
+  scale(-2, 2);
+//  scale(-3, 3); // for iMac
+>>>>>>> FETCH_HEAD
   translate(-capture_img.width, 0);
   image(capture_img, 0, 0);
   popMatrix();
@@ -255,8 +264,13 @@ void renderCapture() {
   if (render_capture) {
     //  println("rendering captured image");
     pushMatrix();
+<<<<<<< HEAD
 //    scale(-2, 2);
     scale(-3, 3);
+=======
+    scale(-2, 2);
+//    scale(-3, 3); // for iMac
+>>>>>>> FETCH_HEAD
     translate(-capture_img.width, 0);
     image(capture_img, 0, 0);
     popMatrix();
@@ -306,10 +320,10 @@ void renderCountdown() {
     tField.setMsg("Photo will be taken in");
     fill(0);
     rectMode(CENTER);
-    rect(width*.65, height*.85, 100, 130);
+    rect(width/2, -height/7, 100, 130);
     textSize(120);
     fill(255);
-    text(countDown, width*.65, height*.85);
+    text(countDown, width/2, -height/7);
     // then show progress bar while
     // downloading images, displaying filtering image, scrap images and text   
     // save PDF, show "your poster is printing, it will take a few mins"
@@ -336,6 +350,7 @@ void renderPrinting() {
     render_textfield = true;
     // save a PDF
     if (fader1.posterNow) {
+      println("print files saved");
       saveImage("output/" + timestamp()+".jpg");
       saveHiResPDF(1, "output/" + timestamp()+".pdf");
     }

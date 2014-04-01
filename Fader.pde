@@ -43,7 +43,6 @@ class Fader {
       count_up = delaytime;
       showFade = false;
       fadeDown = true;
-      printNow = true;
     } //for visual readout purposes only. ignoreable.
   }
 
@@ -55,7 +54,7 @@ class Fader {
     calc_alpha = 255 / (delaytime / count_up); // fade-in, calculate alpha value vs. duration
     alphavalue = ceil(calc_alpha); // ceil rounds UP and returns the closest integer value
 
-    if (alphavalue == 255) { 
+    if (alphavalue == 0) { 
       count_down = 0; 
       count_up = delaytime;
     }   //some precision is lost from float to int, so i reset these
@@ -67,6 +66,7 @@ class Fader {
       count_up = delaytime;
       showFade = false;
       fadeDown = true;
+      printNow = true;
     } //for visual readout purposes only. ignoreable.
   }
 }
