@@ -211,13 +211,8 @@ void captureCam() {
   println("capture image");
   capture_img = cam.get();
   pushMatrix();
-<<<<<<< HEAD
 //  scale(-2, 2);
     scale(-3, 3);
-=======
-  scale(-2, 2);
-//  scale(-3, 3); // for iMac
->>>>>>> FETCH_HEAD
   translate(-capture_img.width, 0);
   image(capture_img, 0, 0);
   popMatrix();
@@ -264,13 +259,8 @@ void renderCapture() {
   if (render_capture) {
     //  println("rendering captured image");
     pushMatrix();
-<<<<<<< HEAD
 //    scale(-2, 2);
     scale(-3, 3);
-=======
-    scale(-2, 2);
-//    scale(-3, 3); // for iMac
->>>>>>> FETCH_HEAD
     translate(-capture_img.width, 0);
     image(capture_img, 0, 0);
     popMatrix();
