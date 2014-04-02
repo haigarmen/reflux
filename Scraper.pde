@@ -63,10 +63,10 @@ class Scraper {
       String title = images.getString("titleNoFormatting");
       String image = images.getString("url");
       try {
-//        String testImage = image.toLowerCase();
-//        if ( testImage.endsWith("jpg") || testImage.endsWith("gif") || testImage.endsWith("tga") || testImage.endsWith("png")) {
+        String testImage = image.toLowerCase();
+        if ( testImage.endsWith("jpg") || testImage.endsWith("gif") || testImage.endsWith("tga") || testImage.endsWith("png")) {
         photo = loadImage(image);
-//        }
+        }
       }
       catch (Exception e) {
         photo = null;
@@ -79,10 +79,13 @@ class Scraper {
         int newX = ((cropSize+imagePadding) * i)+imagePadding;
         int newY = (numberOfRows * int(float(cropSize+imagePadding)/4));
         if (photoWidth > photoHeight) {
-          copy(photo, (photoWidth-photoHeight)/2, 0, photoHeight, photoHeight, newX, newY, cropSize, cropSize);
+          
+//          copy(photo, (photoWidth-photoHeight)/2, 0, photoHeight, photoHeight, newX, newY, cropSize, cropSize);
+          image(photo, newX, newY, cropSize, cropSize);
         } 
         else if ((photoHeight > photoWidth) || (photoHeight == photoWidth)) {
-          copy(photo, 0, (photoHeight-photoWidth)/2, photoWidth, photoWidth, newX, newY, cropSize, cropSize);
+//          copy(photo, 0, (photoHeight-photoWidth)/2, photoWidth, photoWidth, newX, newY, cropSize, cropSize);
+          image(photo, newX, newY, cropSize, cropSize);
         } 
         else {
           println("Garbage image");
@@ -92,9 +95,11 @@ class Scraper {
         text(title, 500, 100 + (20  * (i+i) ));
         println(title + ", " + image + ", i="+i + ", j=" +numberOfRows);
       }
-    }
 //    println("finished is set to true");
-    finished = true;
+    if (!poster_printed) {
+    render_printing = true;
+    }
+    }
   }
 }
 

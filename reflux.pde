@@ -49,6 +49,7 @@ boolean render_poster;
 boolean render_countdown;
 boolean render_printing;
 boolean render_scraper;
+boolean poster_printed;
 
 boolean portrait = false;
 
@@ -154,8 +155,9 @@ void keyPressed() {
     break;
   case 'p':
     if (render_capture) {
+      render_capture = false;
       render_poster = true;
-      render_printing = true;
+      //      render_printing = true;
       //      saveHiResPDF(4, "output/" + timestamp()+".pdf");
     }
     break;
@@ -350,6 +352,11 @@ void renderPrinting() {
     //      saveImage("output/" + timestamp()+".jpg");
     saveHiResPDF(1, "output/" + timestamp()+".pdf");
     render_printing = false;
+    render_poster = false;
+
+    poster_printed=true;
+
+    tField.setMsg("Poster printed");
     // wait for 5 seconds
 
     /*
@@ -415,11 +422,12 @@ void renderPoster() {
   color c = 0xAAc50600; // red
 
   if (render_poster) {
-    println("rendering poster now");
+    tField.setMsg("rendering poster now");
     render_capture = false;
     render_dither = true;
     render_scraper = true;
     blendMode(BLEND);
+    drawMode = int(random(1,8));
     renderFilteredImage(drawMode);
     rectMode(CORNER);
     noStroke();
@@ -441,8 +449,7 @@ void renderPoster() {
     textFont(tField.greyscaleBasic, 40);
     text((scraping.resultCount), width-20, 500);
     blendMode(BLEND);
-    tField.setMsg("rendering poster now");
-    render_scraper=true;
+    renderScraper();
 
     fader1.showFade = false;
     //    startPrinting();
