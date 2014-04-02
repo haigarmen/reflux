@@ -155,6 +155,7 @@ void keyPressed() {
     break;
   case 'p':
     if (render_capture) {
+      tField.setMsg("Creating Poster for "+ searchName);
       render_capture = false;
       render_poster = true;
       //      render_printing = true;
@@ -352,8 +353,7 @@ void renderPrinting() {
     //      saveImage("output/" + timestamp()+".jpg");
     saveHiResPDF(1, "output/" + timestamp()+".pdf");
     render_printing = false;
-    render_poster = false;
-
+//    render_poster = false;
     poster_printed=true;
 
     tField.setMsg("Poster printed");
@@ -427,7 +427,6 @@ void renderPoster() {
     render_dither = true;
     render_scraper = true;
     blendMode(BLEND);
-    drawMode = int(random(1,8));
     renderFilteredImage(drawMode);
     rectMode(CORNER);
     noStroke();

@@ -4,11 +4,12 @@
 class Scraper {
   PImage photo, maskImage, photoCropped;
   int photoWidth, photoHeight;
-  float ratio;
-  int cropSize = 100;
-  int imagePadding = 5;
+  int cropSize = 60;
+  int imagePadding = 0;
   int numberOfImages = 20;
-  int numberOfRows = numberOfImages/10;
+  int imagesPerRow = 10;
+  int numberOfRows = numberOfImages/imagesPerRow;
+  int topMargin = 400;
 
   JSONObject json;
   //  JSONArray results;
@@ -49,15 +50,21 @@ class Scraper {
         results.append(newResults.getJSONObject(k));
       }
     }
-//    println("resultsCount: "+resultCount);
-//    println(results);
+    //    println("resultsCount: "+resultCount);
+    //    println(results);
+    
+    //    drawMode = int(random(1,8));
+//    drawMode = int(random(2, (int(resultCount)/3000)));
+    drawMode = 1;
+    println("drawMode is " + drawMode);
     render_countdown = true;
     timer = new Timer(5000);
     timer.start();
   }
 
   void showImages() {
-    println("JSON results size is: " + results.size());
+    int oldX=0;
+    //    println("JSON results size is: " + results.size());
     for (int i = 0; i < results.size(); i++) {
       JSONObject images = results.getJSONObject(i); 
       String title = images.getString("titleNoFormatting");
@@ -65,40 +72,44 @@ class Scraper {
       try {
         String testImage = image.toLowerCase();
         if ( testImage.endsWith("jpg") || testImage.endsWith("gif") || testImage.endsWith("tga") || testImage.endsWith("png")) {
-        photo = loadImage(image);
+          photo = loadImage(image);
         }
       }
       catch (Exception e) {
         photo = null;
       }
-      if ((photo != null) || (photo.width <= -1) ) { 
+      if ((photo != null) || (photo.width <= -1) ) {
+        fill(203);
+        textSize(14);
+        text(title, width-100, 100 + (20*i));
+
         photoWidth = photo.width;
         photoHeight = photo.height;
-        ratio = float(photoWidth) / float(photoHeight);
+        float ratio = float(photoWidth) / float(photoHeight);
+        int cropWidth = int(cropSize * ratio);
 
-        int newX = ((cropSize+imagePadding) * i)+imagePadding;
-        int newY = (numberOfRows * int(float(cropSize+imagePadding)/4));
+        int newX = cropWidth + oldX+imagePadding;
+        int newY = topMargin+(numberOfRows * int(float(cropSize+imagePadding)/4));
         if (photoWidth > photoHeight) {
-          
-//          copy(photo, (photoWidth-photoHeight)/2, 0, photoHeight, photoHeight, newX, newY, cropSize, cropSize);
-          image(photo, newX, newY, cropSize, cropSize);
+
+          //          copy(photo, (photoWidth-photoHeight)/2, 0, photoHeight, photoHeight, newX, newY, cropSize, cropSize);
+          image(photo, newX, newY, cropWidth, cropSize);
+          oldX = newX;
         } 
         else if ((photoHeight > photoWidth) || (photoHeight == photoWidth)) {
-//          copy(photo, 0, (photoHeight-photoWidth)/2, photoWidth, photoWidth, newX, newY, cropSize, cropSize);
-          image(photo, newX, newY, cropSize, cropSize);
+          //          copy(photo, 0, (photoHeight-photoWidth)/2, photoWidth, photoWidth, newX, newY, cropSize, cropSize);
+          image(photo, newX, newY, cropWidth, cropSize);
+          oldX = newX;
         } 
         else {
           println("Garbage image");
         }
-        fill(203);
-        textSize(14);
-        text(title, 500, 100 + (20  * (i+i) ));
-        println(title + ", " + image + ", i="+i + ", j=" +numberOfRows);
+        //        println(title + ", " + image + ", i="+i + ", j=" +numberOfRows);
       }
-//    println("finished is set to true");
-    if (!poster_printed) {
-    render_printing = true;
-    }
+      //    println("finished is set to true");
+      if (!poster_printed) {
+        render_printing = true;
+      }
     }
   }
 }

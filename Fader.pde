@@ -19,7 +19,7 @@ class Fader {
   }
   void draw() {
     if (showFade) {
-    println("fade alpha is " + alphavalue);
+//    println("fade alpha is " + alphavalue);
       fill(0, alphavalue);
       rectMode(CORNER);
       rect(0, 0, width, height);
@@ -38,7 +38,7 @@ class Fader {
       count_up = delaytime;
     }   //some precision is lost from float to int, so i reset these
     if (alphavalue == 0 || (alphavalue < 0)) {
-      println("alphavalue reached 0, resetting now");
+//      println("alphavalue reached 0, resetting now");
       count_down = 0; 
       count_up = delaytime;
       showFade = false;
@@ -60,7 +60,7 @@ class Fader {
     }   //some precision is lost from float to int, so i reset these
 
     if ((alphavalue == 255) || (alphavalue > 255)) {
-      println("alphavalue reached 255, staying black");
+//      println("alphavalue reached 255, staying black");
       posterNow = true;
       count_down = 0; 
       count_up = delaytime;

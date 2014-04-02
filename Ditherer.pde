@@ -8,7 +8,7 @@ class Ditherer {
   //    float mouseYFactor = map(mouseY, 0,height, 0.05,1);
   float mouseXFactor = random(.25, .5);
   float mouseYFactor = random(.25, .5);
-  int gridSize = 3;
+  int gridSize = 2;
 
   Ditherer(PImage CaptureImage, int drawMode) {
     this.targetImage = CaptureImage;
@@ -33,19 +33,19 @@ class Ditherer {
 
         switch(drawMode) {
         case 1:
+          // greyscale to ellipse area
+          fill(0);
+          noStroke();
+          float r2 = 2 * sqrt(tileWidth*tileWidth*(1-greyscale/255.0));
+          r2 = r2 * (mouseXFactor * 2);
+          ellipse(posX, posY, r2, r2);
+          break;
+        case 2:
           // greyscale to stroke weight
           float w1 = map(greyscale, 0, 255, 15, 0.1);
           stroke(0);
           strokeWeight(w1 * (mouseXFactor / 4 ));
           line(posX, posY, posX + gridSize, posY + gridSize); 
-          break;
-        case 2:
-          // greyscale to ellipse area
-          fill(0);
-          noStroke();
-          float r2 = 2 * sqrt(tileWidth*tileWidth*(1-greyscale/255.0));
-          r2 = r2 * (mouseXFactor * 10);
-          ellipse(posX, posY, r2, r2);
           break;
         case 3:
           // greyscale to line length
