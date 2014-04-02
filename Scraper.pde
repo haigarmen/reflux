@@ -2,6 +2,7 @@
 //  Description: A class that handles the web scraping with a JSON object
 
 class Scraper {
+  String source = null;
   PImage photo, maskImage, photoCropped;
   int photoWidth, photoHeight;
   int cropSize = 60;
@@ -9,7 +10,7 @@ class Scraper {
   int numberOfImages = 20;
   int imagesPerRow = 10;
   int numberOfRows = numberOfImages/imagesPerRow;
-  int topMargin = 400;
+  int topMargin = 700;
 
   JSONObject json;
   //  JSONArray results;
@@ -52,9 +53,9 @@ class Scraper {
     }
     //    println("resultsCount: "+resultCount);
     //    println(results);
-    
+
     //    drawMode = int(random(1,8));
-//    drawMode = int(random(2, (int(resultCount)/3000)));
+    //    drawMode = int(random(2, (int(resultCount)/3000)));
     drawMode = 1;
     println("drawMode is " + drawMode);
     render_countdown = true;
@@ -78,7 +79,7 @@ class Scraper {
       catch (Exception e) {
         photo = null;
       }
-      if ((photo != null) || (photo.width <= -1) ) {
+      if ((photo != null) || (photo.width != -1)) {
         fill(203);
         textSize(14);
         text(title, width-100, 100 + (20*i));

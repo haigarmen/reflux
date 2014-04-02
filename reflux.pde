@@ -31,6 +31,10 @@ import processing.pdf.*;
 import java.util.Calendar;
 import processing.video.*;
 import controlP5.*;
+import java.net.HttpURLConnection;    // required for HTML download
+import java.net.URL;
+import java.net.URLEncoder;
+import java.io.InputStreamReader; 
 
 boolean savePDF = false;
 PImage capture_img;
@@ -297,7 +301,10 @@ void renderNameField() {
           .setFont(tField.greyscaleBasic)
             .setFocus(true)
               .setColor(color(203))
-                ;
+                .setColorForeground(0xff333333)
+                  .setColorBackground(100)
+//                    .setColorActive(0xff000000)
+                      ;
     textFont(tField.greyscaleBasic);
   }
   render_namefield = false;
@@ -353,7 +360,7 @@ void renderPrinting() {
     //      saveImage("output/" + timestamp()+".jpg");
     saveHiResPDF(1, "output/" + timestamp()+".pdf");
     render_printing = false;
-//    render_poster = false;
+    //    render_poster = false;
     poster_printed=true;
 
     tField.setMsg("Poster printed");
@@ -417,7 +424,7 @@ void saveHiResPDF(int scaleFactor, String file) {
 }
 
 void renderPoster() {
-  color a = 0xCC17a1e2; // blue
+  color a = 0xAA17a1e2; // blue
   color b = 0xCC000000; // black
   color c = 0xAAc50600; // red
 
@@ -432,11 +439,13 @@ void renderPoster() {
     noStroke();
     fill(a);
     //  blendMode(SUBTRACT);
-    rect(0, 440, width, 160);
+    //    blendMode(SCREEN);
+    rect(0, 540, width, 160);
     fill(b);
-    rect(0, 600, width, 16);
+    rect(0, 700, width, 12);
     fill(c);
-    rect(0, 616, width, 80);
+    rect(0, 712, width, 80);
+    renderScraper();
     fill(255);
     textFont(tField.greyscaleBasic, 60);
     textAlign(RIGHT);
@@ -448,7 +457,6 @@ void renderPoster() {
     textFont(tField.greyscaleBasic, 40);
     text((scraping.resultCount), width-20, 500);
     blendMode(BLEND);
-    renderScraper();
 
     fader1.showFade = false;
     //    startPrinting();
