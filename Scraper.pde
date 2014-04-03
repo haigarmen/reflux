@@ -69,7 +69,7 @@ class Scraper {
     for (int i = 0; i < results.size(); i++) {
       JSONObject images = results.getJSONObject(i); 
       String title = images.getString("titleNoFormatting");
-      String image = images.getString("url");
+      String image = images.getString("unescapedUrl");
       try {
         String testImage = image.toLowerCase();
         if ( testImage.endsWith("jpg") || testImage.endsWith("gif") || testImage.endsWith("tga") || testImage.endsWith("png")) {
@@ -79,7 +79,7 @@ class Scraper {
       catch (Exception e) {
         photo = null;
       }
-      if ((photo != null) || (photo.width != -1)) {
+      if ((photo != null)) {
         fill(203);
         textSize(14);
         text(title, width-100, 100 + (20*i));
