@@ -11,7 +11,7 @@ class Scraper {
   int imagesPerRow = 10;
   int numberOfRows = numberOfImages/imagesPerRow;
   int topMargin = 700;
-
+  boolean isFinished;
   JSONObject json;
   //  JSONArray results;
   JSONArray results = new JSONArray();
@@ -19,26 +19,17 @@ class Scraper {
   JSONObject cursor;
   String resultCount;
   int noImagesFound;
-  boolean finished;
-
   float num = numberOfImages/4;
   int numberofQueries = ceil(num);
 
   Scraper(String searchName) {
     //    println("passed the name " + searchName);
     // maybe we could add the location dynamically to the search query?
-
     scrapeGoogle(searchName);
   }
-
   void scrapeGoogle(String searchName) {
     searchName = searchName.replaceAll("\\s+", "+"); 
-
-    //    println("searching google with the name " + searchName);
-
     // this function should load the JSON from Google once and store it in an JSONArray called results
-    // then the showImages function can loop through that JSONArray and display images & text
-
     for (int j = 0; j < numberOfImages; j = j+4) {
       //print ("j = " + j);
       JSONArray newResults = new JSONArray();
@@ -60,6 +51,9 @@ class Scraper {
 
     //    drawMode = int(random(1,8));
       drawMode = ceil(noImagesFound/2500);
+      if (drawMode > 8 || drawMode < 1) {
+        drawMode = 4;
+      }
 //    drawMode = 1;
     println("noImagesFound is " + noImagesFound);
     println("drawMode is " + drawMode);
@@ -68,6 +62,7 @@ class Scraper {
     timer.start();
   }
 
+// then the showImages function can loop through that JSONArray and display images & text
   void showImages() {
     int oldX=0;
     //    println("JSON results size is: " + results.size());
@@ -86,9 +81,10 @@ class Scraper {
         photo = null;
       }
       if ((photo != null)) {
+        textAlign(RIGHT);
         fill(203);
         textSize(14);
-        text(title, width-100, 100 + (20*i));
+        text(title, width-60, 150 + (20*i));
 
         photoWidth = photo.width;
         photoHeight = photo.height;
@@ -98,7 +94,6 @@ class Scraper {
         int newX = cropWidth + oldX+imagePadding;
         int newY = topMargin+(numberOfRows * int(float(cropSize+imagePadding)/4));
         if (photoWidth > photoHeight) {
-
           //          copy(photo, (photoWidth-photoHeight)/2, 0, photoHeight, photoHeight, newX, newY, cropSize, cropSize);
           image(photo, newX, newY, cropWidth, cropSize);
           oldX = newX;
@@ -114,9 +109,7 @@ class Scraper {
         //        println(title + ", " + image + ", i="+i + ", j=" +numberOfRows);
       }
       //    println("finished is set to true");
-      if (!poster_printed) {
-        render_printing = true;
-      }
+      isFinished = true;
     }
   }
 }

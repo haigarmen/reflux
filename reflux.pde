@@ -148,7 +148,6 @@ void draw() {
   renderCam();
   renderCapture();
   renderPoster();
-  renderPrinting();
   renderFade();
   renderTextField();
   renderNameField();

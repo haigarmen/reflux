@@ -66,8 +66,12 @@ class Fader {
       count_up = delaytime;
       showFade = true;
       fadeDown = true;
+      // not sure if this shit is any good, suspect it's useless
       if (render_countdown) {
           render_poster = true;
+      }
+      if (timer.isFinished() && render_countdown) {
+      tField.setMsg("press P for poster");
       }
     } //for visual readout purposes only. ignoreable.
   }
