@@ -18,14 +18,21 @@
 
 // issues
 // 1. textfield disappears in Present Mode (fixed)
-// 2. copy image function doesn't work for PDF output
+// 2. copy image function doesn't work for PDF output - FIXED
 //      a. resize images and see if that PDFs or b. convert images to vectors via ditherer class)
-
+//
 // 3. countdown doesn't show (fixed)
 // 4. printing doesn't reset to Cam - Solved - not quite
 // 5. capture should go to printing (without break)
 // 6. fix the halftone dot density in Ditherer
 
+// stuff to fix II
+// resultsCount not influencing drawMode yet FIXED (could be tweaked)
+// printing not working after reset
+// get feedback messages right- press P comes after fade to black
+// press 0 to restart
+// rotate textfield (maybe drop controlp5)
+// fix layout of poster
 
 import processing.pdf.*;
 import java.util.Calendar;
@@ -230,7 +237,6 @@ void captureCam() {
   cam.stop();
   img = new Ditherer(capture_img, drawMode);
   render_capture = true;
-  tField.setMsg("Press 's' key to save, Press 'v' key to return to video.");
 }
 
 void saveImage(String filename) {
@@ -260,6 +266,8 @@ void restartCam() {
   render_poster = false;
   render_capture = false;
   render_dither = false;
+
+  println("render_printing is " + render_printing);
 
   cam.start();
   render_cam = true;
@@ -303,8 +311,8 @@ void renderNameField() {
               .setColor(color(203))
                 .setColorForeground(0xff333333)
                   .setColorBackground(100)
-//                    .setColorActive(0xff000000)
-                      ;
+                    //                    .setColorActive(0xff000000)
+                    ;
     textFont(tField.greyscaleBasic);
   }
   render_namefield = false;
@@ -360,10 +368,10 @@ void renderPrinting() {
     //      saveImage("output/" + timestamp()+".jpg");
     saveHiResPDF(1, "output/" + timestamp()+".pdf");
     render_printing = false;
+    tField.setMsg("Poster printed");
     //    render_poster = false;
     poster_printed=true;
 
-    tField.setMsg("Poster printed");
     // wait for 5 seconds
 
     /*

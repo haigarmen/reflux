@@ -18,6 +18,7 @@ class Scraper {
   JSONArray responseData;
   JSONObject cursor;
   String resultCount;
+  int noImagesFound;
   boolean finished;
 
   float num = numberOfImages/4;
@@ -47,6 +48,9 @@ class Scraper {
       newResults = responseData.getJSONArray("results");
       cursor = responseData.getJSONObject("cursor");
       resultCount = cursor.getString("resultCount");
+      resultCount = trim(resultCount);
+      resultCount = resultCount.replaceAll(",", "");
+      noImagesFound = Integer.valueOf(resultCount).intValue();
       for (int k =0 ; k< newResults.size(); k++) {
         results.append(newResults.getJSONObject(k));
       }
@@ -55,8 +59,9 @@ class Scraper {
     //    println(results);
 
     //    drawMode = int(random(1,8));
-    //    drawMode = int(random(2, (int(resultCount)/3000)));
-    drawMode = 1;
+      drawMode = ceil(noImagesFound/2500);
+//    drawMode = 1;
+    println("noImagesFound is " + noImagesFound);
     println("drawMode is " + drawMode);
     render_countdown = true;
     timer = new Timer(5000);
@@ -74,6 +79,7 @@ class Scraper {
         String testImage = image.toLowerCase();
         if ( testImage.endsWith("jpg") || testImage.endsWith("gif") || testImage.endsWith("tga") || testImage.endsWith("png")) {
           photo = loadImage(image);
+          // photo = requestImage(image); //this might be worth a try
         }
       }
       catch (Exception e) {
