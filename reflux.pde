@@ -24,7 +24,7 @@
 // 3. countdown doesn't show (fixed)
 // 4. printing doesn't reset to Cam - FIXED
 // 5. capture should go to printing (without break)
-// 6. fix the halftone dot density in Ditherer
+// 6. fix the halftone dot density in Ditherer 2
 
 // stuff to fix II
 // resultsCount not influencing drawMode yet FIXED (could be tweaked)
@@ -32,6 +32,7 @@
 
 // get feedback messages right- press P comes after fade to black
 // press 0 to restart
+// Make it work in Portrait mode
 // rotate textfield (maybe drop controlp5)
 // fix layout of poster
 
@@ -64,9 +65,11 @@ boolean render_scraper;
 boolean isPrinted = false;
 boolean portrait = false;
 boolean timeUp = false;
+boolean keyboardOn = true;
 
 ControlP5 cp5;
 TextField tField;
+TextField nameField;
 Ditherer img;
 
 //int gridSize = 10;
@@ -82,7 +85,7 @@ Fader fader1;
 Capture cam;
 
 Scraper scraping;
-String searchName = "haig armen";
+String searchName = "";
 
 
 Timer timer;
@@ -218,6 +221,26 @@ void keyPressed() {
       println("Trapped! Muhaha!");
     }
   }
+     if (keyCode == BACKSPACE) {
+     if (searchName.length() > 0 ) {
+       searchName = searchName.substring( 0 , searchName.length()- 1 );
+     }
+   } else if (keyCode == DELETE) {
+     searchName = "" ;
+   } else if (keyCode != SHIFT && keyCode != CONTROL && keyCode != ALT) {
+     if (keyboardOn) {
+     searchName = searchName + key;
+     }
+   }
+   if (keyCode == ENTER) {
+    keyboardOn = false;
+//    println("enter key pressed");
+       if (searchName.equals("") || searchName.equals(" ")) {
+    searchName = "random people";
+  } 
+  scraping = new Scraper(searchName);
+   }
+
 }
 
 void captureCam() {
@@ -294,23 +317,16 @@ void renderTextField() {
   if (render_textfield) {
     //    println("rendering textfield");
     tField.display();
+  nameField = new TextField(searchName, width/2, int(height/2), 30, 255);
+  nameField.display();
   }
 }
 
 void renderNameField() {
   if (render_namefield) {
     //    println("rendering name textfield");
-    cp5.addTextfield(">>")
-      .setPosition(340, height*.65)
-        .setSize(600, 100)
-          .setFont(tField.greyscaleBasic)
-            .setFocus(true)
-              .setColor(color(203))
-                .setColorForeground(0xff333333)
-                  .setColorBackground(100)
-                    //                    .setColorActive(0xff000000)
-                    ;
-    textFont(tField.greyscaleBasic);
+  nameField = new TextField(searchName, width/2, int(height/2), 30, 255);
+  nameField.display();
   }
   render_namefield = false;
 }

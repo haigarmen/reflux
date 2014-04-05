@@ -25,6 +25,7 @@ class Scraper {
   Scraper(String searchName) {
     //    println("passed the name " + searchName);
     // maybe we could add the location dynamically to the search query?
+    searchName = searchName.replaceAll("\\s+", "+");
     scrapeGoogle(searchName);
   }
   void scrapeGoogle(String searchName) {
