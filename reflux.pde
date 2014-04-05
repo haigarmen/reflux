@@ -22,13 +22,13 @@
 //      a. resize images and see if that PDFs or 
 //      b. convert images to vectors via ditherer class)
 // 3. countdown doesn't show (fixed)
-// 4. printing doesn't reset to Cam - Solved - not quite
+// 4. printing doesn't reset to Cam - FIXED
 // 5. capture should go to printing (without break)
 // 6. fix the halftone dot density in Ditherer
 
 // stuff to fix II
 // resultsCount not influencing drawMode yet FIXED (could be tweaked)
-// printing not working after reset - should print after rendering poster not before
+// printing not working after reset - should print after rendering poster not before FIXED
 
 // get feedback messages right- press P comes after fade to black
 // press 0 to restart
@@ -146,6 +146,7 @@ void draw() {
   background(255);
   renderCam();
   renderCapture();
+  renderPrinting();
   renderPoster();
   renderFade();
   renderTextField();
@@ -264,6 +265,7 @@ void restartCam() {
   render_poster = false;
   render_capture = false;
   render_dither = false;
+  isPrinted = false;
   cam.start();
   render_cam = true;
 }
