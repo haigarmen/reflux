@@ -19,8 +19,8 @@
 // issues
 // 1. textfield disappears in Present Mode (fixed)
 // 2. copy image function doesn't work for PDF output - FIXED
-//      a. resize images and see if that PDFs or b. convert images to vectors via ditherer class)
-//
+//      a. resize images and see if that PDFs or 
+//      b. convert images to vectors via ditherer class)
 // 3. countdown doesn't show (fixed)
 // 4. printing doesn't reset to Cam - Solved - not quite
 // 5. capture should go to printing (without break)
@@ -28,7 +28,8 @@
 
 // stuff to fix II
 // resultsCount not influencing drawMode yet FIXED (could be tweaked)
-// printing not working after reset
+// printing not working after reset - should print after rendering poster not before
+
 // get feedback messages right- press P comes after fade to black
 // press 0 to restart
 // rotate textfield (maybe drop controlp5)
@@ -58,18 +59,16 @@ boolean render_namefield;
 boolean render_progress;
 boolean render_poster;
 boolean render_countdown;
-boolean render_printing;
+boolean render_printing = false;
 boolean render_scraper;
-boolean poster_printed;
-
+boolean isPrinted = false;
 boolean portrait = false;
-
 boolean timeUp = false;
+
 ControlP5 cp5;
-
 TextField tField;
-
 Ditherer img;
+
 //int gridSize = 10;
 int drawMode = 1;
 
@@ -165,10 +164,10 @@ void keyPressed() {
     break;
   case 'p':
     if (render_capture) {
+  println("P pressed");
       tField.setMsg("Creating Poster for "+ searchName);
       render_capture = false;
       render_poster = true;
-      //      render_printing = true;
       //      saveHiResPDF(4, "output/" + timestamp()+".pdf");
     }
     break;
@@ -265,9 +264,6 @@ void restartCam() {
   render_poster = false;
   render_capture = false;
   render_dither = false;
-
-  println("render_printing is " + render_printing);
-
   cam.start();
   render_cam = true;
 }
@@ -342,10 +338,10 @@ void renderCountdown() {
       // when timer finished capture cam image
       captureCam();
       render_capture = true;
+      // this might be why we can't go to render_poster automatically and need to pre
       render_countdown = false;
       //      tField.setMsg("Scraping the web: " + searchName + ", press P for poster");
-      tField.setMsg("Scraping the web: " + searchName + ", press P for poster");
-
+      tField.setMsg("Scraping the web: " + searchName);
 
       // fade down to black first
       startTime = millis();
@@ -359,32 +355,15 @@ void renderCountdown() {
 
 void renderPrinting() {
   if (render_printing) {
+    println("print file saved");
     // display a message that poster is now printing
     tField.setMsg("Printing poster now, please wait");  
     render_textfield = true;
     // save a PDF
-    println("print file saved");
     //      saveImage("output/" + timestamp()+".jpg");
     saveHiResPDF(1, "output/" + timestamp()+".pdf");
     render_printing = false;
-    tField.setMsg("Poster printed");
-    //    render_poster = false;
-    poster_printed=true;
-
-    // wait for 5 seconds
-
-    /*
-    render_capture = false;
-     render_dither = false;
-     render_countdown = false;
-     render_printing = false;
-     render_poster = false;
-     render_cam = false;
-     fader1.posterNow = false;
-     */
-
-    //    restartCam();
-    //    tField.setMsg("Press the 'c' key to capture image.");
+    isPrinted = true;
   }
 }
 
@@ -428,6 +407,7 @@ void saveHiResPDF(int scaleFactor, String file) {
   pdf.scale(scaleFactor);
   renderPoster();
   endRecord();
+  tField.setMsg("Poster printed");
 }
 
 void renderPoster() {
@@ -436,14 +416,16 @@ void renderPoster() {
   color c = 0xAAc50600; // red
 
   if (render_poster) {
-    tField.setMsg("rendering poster now");
+    tField.setMsg("You're poster is ready");
     render_capture = false;
     render_dither = true;
     render_scraper = true;
+//    poster_printed=true;
     blendMode(BLEND);
     renderFilteredImage(drawMode);
     rectMode(CORNER);
     noStroke();
+    renderScraper();
     fill(a);
     //  blendMode(SUBTRACT);
     //    blendMode(SCREEN);
@@ -452,7 +434,6 @@ void renderPoster() {
     rect(0, 700, width, 12);
     fill(c);
     rect(0, 712, width, 80);
-    renderScraper();
     fill(255);
     textFont(tField.greyscaleBasic, 60);
     textAlign(RIGHT);
@@ -466,7 +447,14 @@ void renderPoster() {
     blendMode(BLEND);
 
     fader1.showFade = false;
-    //    startPrinting();
+    
+    if (!isPrinted) {
+    println("finished printing");
+    render_printing = true;
+  } else {
+    render_printing = false;
+//    renderPrinting();
+  }
     // show a scraping web progress bar
     // then check that scraper.showImages.finished is true
     // then fade up with rendered poster
@@ -476,20 +464,7 @@ void renderPoster() {
   }
 }   
 
-void startPrinting() {
-  if (scraping.finished) {
-    println("printing time");
-    render_printing = true;
 
-    // fade down to black first
-    /*
-    startTime = millis();
-     fader1 = new Fader(startTime);      
-     fader1.showFade = true;
-     fader1.fadeUp = true;
-     */
-  }
-}
 void controlEvent(ControlEvent theEvent) {
   if (theEvent.isAssignableFrom(Textfield.class)) {
     println("controlEvent: accessing a string from controller '"
