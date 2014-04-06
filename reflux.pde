@@ -63,7 +63,7 @@ boolean render_countdown;
 boolean render_printing = false;
 boolean render_scraper;
 boolean isPrinted = false;
-boolean portrait = false;
+boolean portrait = true;
 boolean timeUp = false;
 boolean keyboardOn = true;
 
@@ -128,11 +128,8 @@ void setup() {
     cam.start();
   }
   if (portrait) {
-    tField = new TextField("Enter your full name and press ENTER", height/2, width/8, 30, 255);
-    pushMatrix();
-    rotate(1.57079633);
+    tField = new TextField("Enter your full name and press ENTER", height/2, -200, 30, 255);
     tField.display();
-    popMatrix();
   } 
   else {
     tField = new TextField("Enter your full name and press ENTER", width/2, int(height*.6), 30, 255);
@@ -152,9 +149,14 @@ void draw() {
   renderPrinting();
   renderPoster();
   renderFade();
-  renderTextField();
-  renderNameField();
-  renderCountdown();
+  if (portrait) {
+    pushMatrix();
+    rotate(1.57079633);
+    renderTextField();
+    renderNameField();
+    renderCountdown();
+    popMatrix();
+  }
 }
 
 //wrap any of these in a beginRecord() and endRecord() to save as pdf.
@@ -168,7 +170,7 @@ void keyPressed() {
     break;
   case 'p':
     if (render_capture) {
-  println("P pressed");
+      println("P pressed");
       tField.setMsg("Creating Poster for "+ searchName);
       render_capture = false;
       render_poster = true;
@@ -221,26 +223,27 @@ void keyPressed() {
       println("Trapped! Muhaha!");
     }
   }
-     if (keyCode == BACKSPACE) {
-     if (searchName.length() > 0 ) {
-       searchName = searchName.substring( 0 , searchName.length()- 1 );
-     }
-   } else if (keyCode == DELETE) {
-     searchName = "" ;
-   } else if (keyCode != SHIFT && keyCode != CONTROL && keyCode != ALT) {
-     if (keyboardOn) {
-     searchName = searchName + key;
-     }
-   }
-   if (keyCode == ENTER) {
-    keyboardOn = false;
-//    println("enter key pressed");
-       if (searchName.equals("") || searchName.equals(" ")) {
-    searchName = "random people";
+  if (keyCode == BACKSPACE) {
+    if (searchName.length() > 0 ) {
+      searchName = searchName.substring( 0, searchName.length()- 1 );
+    }
   } 
-  scraping = new Scraper(searchName);
-   }
-
+  else if (keyCode == DELETE) {
+    searchName = "" ;
+  } 
+  else if (keyCode != SHIFT && keyCode != CONTROL && keyCode != ALT) {
+    if (keyboardOn) {
+      searchName = searchName + key;
+    }
+  }
+  if (keyCode == ENTER) {
+    keyboardOn = false;
+    //    println("enter key pressed");
+    if (searchName.equals("") || searchName.equals(" ")) {
+      searchName = "random people";
+    } 
+    scraping = new Scraper(searchName);
+  }
 }
 
 void captureCam() {
@@ -316,17 +319,27 @@ void renderFilteredImage(int drawMode) {
 void renderTextField() {
   if (render_textfield) {
     //    println("rendering textfield");
+      if (portrait) {
+    tField = new TextField("Enter your full name and press ENTER", height/2, -200, 30, 255);
     tField.display();
-  nameField = new TextField(searchName, width/2, int(height/2), 30, 255);
-  nameField.display();
+    nameField = new TextField(searchName, height/2, -(height/4), 30, 255);
+    nameField.display();
+  } 
+  else {
+    tField = new TextField("Enter your full name and press ENTER", width/2, int(height*.6), 30, 255);
+    tField.display();
+    nameField = new TextField(searchName, width/2, int(height/2), 30, 255);
+    nameField.display();
+  }
+
   }
 }
 
 void renderNameField() {
   if (render_namefield) {
     //    println("rendering name textfield");
-  nameField = new TextField(searchName, width/2, int(height/2), 30, 255);
-  nameField.display();
+    nameField = new TextField(searchName, width/2, int(height/2), 30, 255);
+    nameField.display();
   }
   render_namefield = false;
 }
@@ -420,9 +433,11 @@ String timestamp() {
 }
 
 void saveHiResPDF(int scaleFactor, String file) {
-  PGraphics pdf = createGraphics(width*scaleFactor, height*scaleFactor, PDF, file);
+//  PGraphics pdf = createGraphics(width*scaleFactor, height*scaleFactor, PDF, file);
+  PDF pdf = new PDF(this, width*scaleFactor, height*scaleFactor, sketchPath(file));
   beginRecord(pdf);
   pdf.scale(scaleFactor);
+  pdf.overPrint(true);
   renderPoster();
   endRecord();
   tField.setMsg("Poster printed");
@@ -438,7 +453,7 @@ void renderPoster() {
     render_capture = false;
     render_dither = true;
     render_scraper = true;
-//    poster_printed=true;
+    //    poster_printed=true;
     blendMode(BLEND);
     renderFilteredImage(drawMode);
     rectMode(CORNER);
@@ -465,14 +480,15 @@ void renderPoster() {
     blendMode(BLEND);
 
     fader1.showFade = false;
-    
+
     if (!isPrinted) {
-    println("finished printing");
-    render_printing = true;
-  } else {
-    render_printing = false;
-//    renderPrinting();
-  }
+      println("finished printing");
+      render_printing = true;
+    } 
+    else {
+      render_printing = false;
+      //    renderPrinting();
+    }
     // show a scraping web progress bar
     // then check that scraper.showImages.finished is true
     // then fade up with rendered poster
