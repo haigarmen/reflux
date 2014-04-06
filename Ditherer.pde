@@ -6,8 +6,8 @@ class Ditherer {
   int drawMode;
   //    float mouseXFactor = map(mouseX, 0,width, 0.05,1);
   //    float mouseYFactor = map(mouseY, 0,height, 0.05,1);
-  float mouseXFactor = random(.25, .5);
-  float mouseYFactor = random(.25, .5);
+  float mouseXFactor = .5;
+  float mouseYFactor = .5;
   int gridSize = 2;
 
   Ditherer(PImage CaptureImage, int drawMode) {
@@ -86,7 +86,7 @@ class Ditherer {
           float w6 = map(greyscale, 0, 255, 25, 0);
           noStroke();
           fill(c);
-          ellipse(posX, posY, w6 * mouseXFactor, w6 * mouseXFactor); 
+          ellipse(posX, posY, w6 * (mouseXFactor/3), w6 * (mouseXFactor/3)); 
           break;
         case 7:
           stroke(c);

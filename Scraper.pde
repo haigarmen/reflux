@@ -52,6 +52,7 @@ class Scraper {
 
     //    drawMode = int(random(1,8));
       drawMode = ceil(noImagesFound/2500);
+      drawMode = int(random(drawMode));
       if (drawMode > 8 || drawMode < 1) {
         drawMode = 4;
       }

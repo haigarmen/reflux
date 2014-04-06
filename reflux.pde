@@ -319,27 +319,27 @@ void renderFilteredImage(int drawMode) {
 void renderTextField() {
   if (render_textfield) {
     //    println("rendering textfield");
-      if (portrait) {
-    tField = new TextField("Enter your full name and press ENTER", height/2, -200, 30, 255);
-    tField.display();
-    nameField = new TextField(searchName, height/2, -(height/4), 30, 255);
-    nameField.display();
-  } 
-  else {
-    tField = new TextField("Enter your full name and press ENTER", width/2, int(height*.6), 30, 255);
-    tField.display();
-    nameField = new TextField(searchName, width/2, int(height/2), 30, 255);
-    nameField.display();
-  }
+    if (portrait) {
+      tField = new TextField("Enter your full name and press ENTER", height/2, -200, 28, 255);
+      tField.display();
+      nameField = new TextField(searchName, height/2, -int(height*.12), 56, 255);
+      nameField.display();
+    } 
+    else {
+      tField = new TextField("Enter your full name and press ENTER", width/2, int(height*.6), 30, 255);
+      tField.display();
 
+      nameField = new TextField(searchName, width/2, int(height*.675), 60, 255);
+      nameField.display();
+    }
   }
 }
 
 void renderNameField() {
   if (render_namefield) {
     //    println("rendering name textfield");
-    nameField = new TextField(searchName, width/2, int(height/2), 30, 255);
-    nameField.display();
+    //    nameField = new TextField(searchName, width/2, int(height/2), 30, 255);
+    //    nameField.display();
   }
   render_namefield = false;
 }
@@ -433,7 +433,7 @@ String timestamp() {
 }
 
 void saveHiResPDF(int scaleFactor, String file) {
-//  PGraphics pdf = createGraphics(width*scaleFactor, height*scaleFactor, PDF, file);
+  //  PGraphics pdf = createGraphics(width*scaleFactor, height*scaleFactor, PDF, file);
   PDF pdf = new PDF(this, width*scaleFactor, height*scaleFactor, sketchPath(file));
   beginRecord(pdf);
   pdf.scale(scaleFactor);
@@ -454,30 +454,38 @@ void renderPoster() {
     render_dither = true;
     render_scraper = true;
     //    poster_printed=true;
-    blendMode(BLEND);
-    renderFilteredImage(drawMode);
-    rectMode(CORNER);
-    noStroke();
-    renderScraper();
-    fill(a);
-    //  blendMode(SUBTRACT);
-    //    blendMode(SCREEN);
-    rect(0, 540, width, 160);
-    fill(b);
-    rect(0, 700, width, 12);
-    fill(c);
-    rect(0, 712, width, 80);
-    fill(255);
-    textFont(tField.greyscaleBasic, 60);
-    textAlign(RIGHT);
-    text((searchName.toUpperCase()), width-20, 570);
-    /// smaller type
-    textFont(tField.greyscaleBasic, 20);
-    text("Search Result Count: ", width-20, 470);
-    // larger type
-    textFont(tField.greyscaleBasic, 40);
-    text((scraping.resultCount), width-20, 500);
-    blendMode(BLEND);
+    if (portrait) {
+      pushMatrix();
+      rotate(PI);
+      translate(-width,-height);
+      blendMode(BLEND);
+      renderFilteredImage(drawMode);
+      rectMode(CORNER);
+      noStroke();
+      rotate(-PI/2);
+      translate(-width,0);
+      renderScraper();
+      fill(a);
+      //  blendMode(SUBTRACT);
+      //    blendMode(SCREEN);
+      rect(0, 740, width, 160);
+      fill(b);
+      rect(0, 900, width, 12);
+      fill(c);
+      rect(0, 912, width, 80);
+      fill(255);
+      textFont(tField.greyscaleBasic, 60);
+      textAlign(RIGHT);
+      text((searchName.toUpperCase()), width-20, 570);
+      /// smaller type
+      textFont(tField.greyscaleBasic, 20);
+      text("Search Result Count: ", width-20, 470);
+      // larger type
+      textFont(tField.greyscaleBasic, 40);
+      text((scraping.resultCount), width-20, 500);
+      blendMode(BLEND);
+      popMatrix();
+    }
 
     fader1.showFade = false;
 
