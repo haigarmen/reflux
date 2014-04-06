@@ -24,17 +24,16 @@
 // 3. countdown doesn't show (fixed)
 // 4. printing doesn't reset to Cam - FIXED
 // 5. capture should go to printing (without break)
-// 6. fix the halftone dot density in Ditherer 2
-
 // stuff to fix II
 // resultsCount not influencing drawMode yet FIXED (could be tweaked)
 // printing not working after reset - should print after rendering poster not before FIXED
 
+// press 0 to restart 
+// Make it work in Portrait mode FIXED
+// rotate textfield (maybe drop controlp5) FIXED
+// fix layout of poster FIXED
 // get feedback messages right- press P comes after fade to black
-// press 0 to restart
-// Make it work in Portrait mode
-// rotate textfield (maybe drop controlp5)
-// fix layout of poster
+// fix the halftone dot density in Ditherer 2
 
 import processing.pdf.*;
 import java.util.Calendar;
@@ -63,7 +62,6 @@ boolean render_countdown;
 boolean render_printing = false;
 boolean render_scraper;
 boolean isPrinted = false;
-boolean portrait = true;
 boolean timeUp = false;
 boolean keyboardOn = true;
 
@@ -75,6 +73,7 @@ Ditherer img;
 //int gridSize = 10;
 int drawMode = 1;
 int margin = 30;
+boolean portrait = false;
 
 String folder_path  = "output/";
 String file_format  = ".jpg";
@@ -134,6 +133,7 @@ void setup() {
   } 
   else {
     tField = new TextField("Enter your full name and press ENTER", width/2, int(height*.6), 30, 255);
+    tField.display();
   }
 
   //  progBar = new ProgressBar(4000);
