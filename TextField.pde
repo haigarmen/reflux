@@ -12,7 +12,7 @@ int fontColor;
 
 public TextField(String inMsg, int x, int y,int fSize,int clr) {
     greyscaleBasic = createFont("Greyscale Basic Regular.ttf", 80);
-    greyscaleBold = createFont("Greyscale Basic Bold.ttf", 120);
+    greyscaleBold = createFont("Greyscale Basic Bold.ttf", 80);
     msg = inMsg;
     xPos = x;
     yPos = y;

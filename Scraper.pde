@@ -5,12 +5,12 @@ class Scraper {
   String source = null;
   PImage photo, maskImage, photoCropped;
   int photoWidth, photoHeight;
-  int cropSize = 60;
+  int cropSize = 64;
   int imagePadding = 0;
-  int numberOfImages = 20;
-  int imagesPerRow = 10;
+  int numberOfImages = 32;
+  int imagesPerRow = 12;
   int numberOfRows = numberOfImages/imagesPerRow;
-  int topMargin = 700;
+  int topMargin = 800;
   boolean isFinished;
   JSONObject json;
   //  JSONArray results;
@@ -67,6 +67,9 @@ class Scraper {
 // then the showImages function can loop through that JSONArray and display images & text
   void showImages() {
     int oldX=0;
+    int cropWidth= 0;
+    int rowNum=0;
+    int startRow = 0;
     //    println("JSON results size is: " + results.size());
     for (int i = 0; i < results.size(); i++) {
       JSONObject images = results.getJSONObject(i); 
@@ -76,7 +79,7 @@ class Scraper {
         String testImage = image.toLowerCase();
         if ( testImage.endsWith("jpg") || testImage.endsWith("gif") || testImage.endsWith("tga") || testImage.endsWith("png")) {
           photo = loadImage(image);
-          // photo = requestImage(image); //this might be worth a try
+//          photo = requestImage(image); //this might be worth a try
         }
       }
       catch (Exception e) {
@@ -86,15 +89,21 @@ class Scraper {
         textAlign(RIGHT);
         fill(203);
         textSize(14);
-        text(title, width-60, 150 + (20*i));
+        text(title, height-margin, 150 + (24*i));
 
         photoWidth = photo.width;
         photoHeight = photo.height;
         float ratio = float(photoWidth) / float(photoHeight);
-        int cropWidth = int(cropSize * ratio);
-
-        int newX = cropWidth + oldX+imagePadding;
-        int newY = topMargin+(numberOfRows * int(float(cropSize+imagePadding)/4));
+        int newX = cropWidth + oldX + imagePadding;
+        cropWidth = int(cropSize * ratio);
+        
+        startRow = i % imagesPerRow;
+        if (startRow ==0) {
+          newX = 0;
+          rowNum = rowNum+1;
+        }
+//        println("rowNum is " + rowNum);
+        int newY = topMargin+ int(rowNum * (cropSize+imagePadding));
         if (photoWidth > photoHeight) {
           //          copy(photo, (photoWidth-photoHeight)/2, 0, photoHeight, photoHeight, newX, newY, cropSize, cropSize);
           image(photo, newX, newY, cropWidth, cropSize);

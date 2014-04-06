@@ -74,6 +74,7 @@ Ditherer img;
 
 //int gridSize = 10;
 int drawMode = 1;
+int margin = 30;
 
 String folder_path  = "output/";
 String file_format  = ".jpg";
@@ -463,26 +464,27 @@ void renderPoster() {
       rectMode(CORNER);
       noStroke();
       rotate(-PI/2);
-      translate(-width,0);
+      translate(-height,0);
       renderScraper();
+//      translate(height/5,0);
       fill(a);
       //  blendMode(SUBTRACT);
       //    blendMode(SCREEN);
-      rect(0, 740, width, 160);
+      rect(0, 850, height, 150);
       fill(b);
-      rect(0, 900, width, 12);
+      rect(0, 1000, height, 12);
       fill(c);
-      rect(0, 912, width, 80);
+      rect(0, 1012, height, 80);
       fill(255);
-      textFont(tField.greyscaleBasic, 60);
+      textFont(tField.greyscaleBasic, 64);
       textAlign(RIGHT);
-      text((searchName.toUpperCase()), width-20, 570);
+      text((searchName.toUpperCase()), height-margin, 990);
       /// smaller type
-      textFont(tField.greyscaleBasic, 20);
-      text("Search Result Count: ", width-20, 470);
       // larger type
-      textFont(tField.greyscaleBasic, 40);
-      text((scraping.resultCount), width-20, 500);
+      textFont(tField.greyscaleBold, 30);
+      text("> IMAGE SEARCH RESULT COUNT: "+ (scraping.resultCount), height-margin, 1050);
+      textFont(tField.greyscaleBasic, 30);
+      text(("> CAPTURED ON: " + timestamp()), height-margin, 1080);
       blendMode(BLEND);
       popMatrix();
     }
