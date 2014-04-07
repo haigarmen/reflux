@@ -73,7 +73,7 @@ Ditherer img;
 //int gridSize = 10;
 int drawMode = 1;
 int margin = 30;
-boolean portrait = false;
+boolean portrait = true;
 
 String folder_path  = "output/";
 String file_format  = ".jpg";
@@ -98,8 +98,8 @@ boolean sketchFullScreen() {
 
 void setup() {
   frame.setBackground(new java.awt.Color(0, 0, 0));
-  size(1280, 960);
-  //  size(1920, 1440);
+//  size(1280, 960);
+    size(1920, 1440);
   smooth();
   noStroke();
   video_width = 640;
@@ -122,8 +122,8 @@ void setup() {
       //      println(cameras[i]);
     }
     // The camera can be initialized directly using an element from the array returned by list():
-    cam = new Capture(this, video_width, video_height, "FaceTime HD Camera");
-    //      cam = new Capture(this, video_width, video_height, "Built-in iSight");
+//    cam = new Capture(this, video_width, video_height, "FaceTime HD Camera");
+    cam = new Capture(this, video_width, video_height, "Built-in iSight");
     //      cam = new Capture(this, video_width, video_height, "Microsoft® LifeCam Show(TM)");
     cam.start();
   }
