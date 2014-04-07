@@ -73,7 +73,7 @@ Ditherer img;
 //int gridSize = 10;
 int drawMode = 1;
 int margin = 30;
-boolean portrait = false;
+boolean portrait = true;
 
 String folder_path  = "output/";
 String file_format  = ".jpg";
@@ -152,11 +152,16 @@ void draw() {
   renderFade();
   if (portrait) {
     pushMatrix();
-    rotate(1.57079633);
+    rotate(PI/2);
     renderTextField();
     renderNameField();
     renderCountdown();
     popMatrix();
+  } 
+  else {
+    renderTextField();
+    renderNameField();
+    renderCountdown();
   }
 }
 
@@ -358,10 +363,24 @@ void renderCountdown() {
     tField.setMsg("Photo will be taken in");
     fill(0);
     rectMode(CENTER);
-    rect(width/2, height/7, 100, 130);
-    textSize(120);
-    fill(255);
-    text(countDown, width/2, height/7);
+    if (portrait) {
+      pushMatrix();
+      rotate(PI);
+      translate(-width, -height);
+      rotate(-PI/2);
+      translate(-width, 0);      
+      rect(height/2, width/7, 100, 130);
+      textSize(120);
+      fill(255);
+      text(countDown, height/2, width/7);
+      popMatrix();
+    } 
+    else {
+      rect(width/2, height/7, 100, 130);
+      textSize(120);
+      fill(255);
+      text(countDown, width/2, height/7);
+    }
     // then show progress bar while
     // downloading images, displaying filtering image, scrap images and text   
     // save PDF, show "your poster is printing, it will take a few mins"
@@ -458,15 +477,15 @@ void renderPoster() {
     if (portrait) {
       pushMatrix();
       rotate(PI);
-      translate(-width,-height);
+      translate(-width, -height);
       blendMode(BLEND);
       renderFilteredImage(drawMode);
       rectMode(CORNER);
       noStroke();
       rotate(-PI/2);
-      translate(-height,0);
+      translate(-height, 0);
       renderScraper();
-//      translate(height/5,0);
+      //      translate(height/5,0);
       fill(a);
       //  blendMode(SUBTRACT);
       //    blendMode(SCREEN);
@@ -508,21 +527,21 @@ void renderPoster() {
   }
 }   
 
-
+/*
 void controlEvent(ControlEvent theEvent) {
-  if (theEvent.isAssignableFrom(Textfield.class)) {
-    println("controlEvent: accessing a string from controller '"
-      +theEvent.getName()+"': "
-      +theEvent.getStringValue()
-      );
-  }
-  searchName = theEvent.getStringValue();
-  if (searchName.equals("") || searchName.equals(" ")) {
-    searchName = "random people";
-  } 
-  searchName = searchName.replaceAll("\\s+", "+");
-  scraping = new Scraper(searchName);
-
-  cp5.remove(">>");
-}
-
+ if (theEvent.isAssignableFrom(Textfield.class)) {
+ println("controlEvent: accessing a string from controller '"
+ +theEvent.getName()+"': "
+ +theEvent.getStringValue()
+ );
+ }
+ searchName = theEvent.getStringValue();
+ if (searchName.equals("") || searchName.equals(" ")) {
+ searchName = "random people";
+ } 
+ searchName = searchName.replaceAll("\\s+", "+");
+ scraping = new Scraper(searchName);
+ 
+ cp5.remove(">>");
+ }
+ */
