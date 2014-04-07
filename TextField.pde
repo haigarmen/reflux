@@ -1,6 +1,6 @@
 class TextField {
 
-ControlP5 cp5;
+//ControlP5 cp5;
 PFont greyscaleBasic;
 PFont greyscaleBold;
 String msg;
@@ -30,7 +30,7 @@ public TextField(String inMsg, int x, int y,int fSize,int clr) {
   }
   void display() {
     noStroke();
-    fill(0, 200);
+    fill(0, 180);
     rectMode(CENTER);
     rect(xPos, yPos, 600, 80);
     textFont(greyscaleBasic,fontSize);

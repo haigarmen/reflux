@@ -38,7 +38,8 @@
 import processing.pdf.*;
 import java.util.Calendar;
 import processing.video.*;
-import controlP5.*;
+//import controlP5.*;
+
 import java.net.HttpURLConnection;    // required for HTML download
 import java.net.URL;
 import java.net.URLEncoder;
@@ -65,20 +66,25 @@ boolean isPrinted = false;
 boolean timeUp = false;
 boolean keyboardOn = true;
 
-ControlP5 cp5;
+//ControlP5 cp5;
 TextField tField;
 TextField nameField;
 Ditherer img;
 
 //int gridSize = 10;
 int drawMode = 1;
+<<<<<<< HEAD
 int margin = 30;
+=======
+float goldenR = 1.618;
+int margin = 180;
+>>>>>>> FETCH_HEAD
 boolean portrait = true;
 
 String folder_path  = "output/";
 String file_format  = ".jpg";
 
-ProgressBar progBar;
+//ProgressBar progBar;
 Fader fader1;
 
 // A variable for the frame we grab from the webcam
@@ -108,7 +114,7 @@ void setup() {
   render_textfield = true;
   render_namefield = true;
   app_saving = false;
-  cp5 = new ControlP5(this);
+  //  cp5 = new ControlP5(this);
 
   //get a list of available camera modes and list them
   String[] cameras = Capture.list();
@@ -127,16 +133,15 @@ void setup() {
     //      cam = new Capture(this, video_width, video_height, "Microsoft® LifeCam Show(TM)");
     cam.start();
   }
+  //  progBar = new ProgressBar(4000);
   if (portrait) {
-    tField = new TextField("Enter your full name and press ENTER", height/2, -200, 30, 255);
-    tField.display();
+    tField = new TextField("Enter your full name and press ENTER", height/2, -int(width/goldenR), 28, 255);
+    nameField = new TextField(searchName, height/2, -int((width/goldenR)-84), 56, 255);
   } 
   else {
     tField = new TextField("Enter your full name and press ENTER", width/2, int(height*.6), 30, 255);
-    tField.display();
+    nameField = new TextField(searchName, width/2, int(height*.675), 60, 255);
   }
-
-  //  progBar = new ProgressBar(4000);
 
   fader1 = new Fader(startTime+2000);
   fader1.showFade = true;
@@ -145,6 +150,7 @@ void setup() {
 
 void draw() {
   background(255);
+
   renderCam();
   renderCapture();
   renderPrinting();
@@ -152,60 +158,67 @@ void draw() {
   renderFade();
   if (portrait) {
     pushMatrix();
-    rotate(1.57079633);
+    rotate(PI/2);
     renderTextField();
     renderNameField();
     renderCountdown();
     popMatrix();
+  } 
+  else {
+    renderTextField();
+    renderNameField();
+    renderCountdown();
   }
 }
 
-//wrap any of these in a beginRecord() and endRecord() to save as pdf.
+
 
 void keyPressed() {
-  switch(key) {
-  case 's':
-    if (render_capture) {
-      saveImage("output/" + timestamp()+".jpg");
+  if (!keyboardOn) {
+    switch(key) {
+    case 's':
+      if (render_capture) {
+        saveImage("output/" + timestamp()+".jpg");
+      }
+      break;
+    case 'p':
+      if (render_capture) {
+        println("P pressed");
+        tField.setMsg("Creating Poster for "+ searchName);
+        render_capture = false;
+        render_poster = true;
+        //      saveHiResPDF(4, "output/" + timestamp()+".pdf");
+      }
+      break;
+    case 'v':
+      restartCam();
+      tField.setMsg("Press the 'c' key to capture image.");
+      break;
+    case '1':
+      drawMode = 1;
+      break;
+    case '2':
+      drawMode = 2;
+      break;
+    case '3':
+      drawMode = 3;
+      break;
+    case '4':
+      drawMode = 4;
+      break;
+    case '5':
+      drawMode = 5;
+      break;
+    case '6':
+      drawMode = 6;
+      break;
+    case '7':
+      drawMode = 7;
+      break;
+    case '8':
+      drawMode = 8;
+      break;
     }
-    break;
-  case 'p':
-    if (render_capture) {
-      println("P pressed");
-      tField.setMsg("Creating Poster for "+ searchName);
-      render_capture = false;
-      render_poster = true;
-      //      saveHiResPDF(4, "output/" + timestamp()+".pdf");
-    }
-    break;
-  case 'v':
-    restartCam();
-    tField.setMsg("Press the 'c' key to capture image.");
-    break;
-  case '1':
-    drawMode = 1;
-    break;
-  case '2':
-    drawMode = 2;
-    break;
-  case '3':
-    drawMode = 3;
-    break;
-  case '4':
-    drawMode = 4;
-    break;
-  case '5':
-    drawMode = 5;
-    break;
-  case '6':
-    drawMode = 6;
-    break;
-  case '7':
-    drawMode = 7;
-    break;
-  case '8':
-    drawMode = 8;
-    break;
   }
 
   if (key == CODED) {
@@ -320,29 +333,18 @@ void renderFilteredImage(int drawMode) {
 void renderTextField() {
   if (render_textfield) {
     //    println("rendering textfield");
-    if (portrait) {
-      tField = new TextField("Enter your full name and press ENTER", height/2, -200, 28, 255);
-      tField.display();
-      nameField = new TextField(searchName, height/2, -int(height*.12), 56, 255);
-      nameField.display();
-    } 
-    else {
-      tField = new TextField("Enter your full name and press ENTER", width/2, int(height*.6), 30, 255);
-      tField.display();
-
-      nameField = new TextField(searchName, width/2, int(height*.675), 60, 255);
-      nameField.display();
-    }
+    tField.display();
   }
 }
 
 void renderNameField() {
   if (render_namefield) {
-    //    println("rendering name textfield");
+    //    println("rendering namefield");
+    nameField.setMsg(searchName);
+    nameField.display();
     //    nameField = new TextField(searchName, width/2, int(height/2), 30, 255);
     //    nameField.display();
   }
-  render_namefield = false;
 }
 
 void renderScraper() {
@@ -353,15 +355,27 @@ void renderScraper() {
 
 void renderCountdown() {
   if (render_countdown) {
+    render_namefield = false;
     // show countdown
     int countDown = ((timer.totalTime/1000) - int(timer.passedTime/1000));
     tField.setMsg("Photo will be taken in");
     fill(0);
     rectMode(CENTER);
-    rect(width/2, height/7, 100, 130);
-    textSize(120);
-    fill(255);
-    text(countDown, width/2, height/7);
+    if (portrait) {
+      pushMatrix();
+      rotate(PI/2);
+      rect(height/2, width/2, 120, 120);
+      textSize(120);
+      fill(255);
+      text(countDown, height/2, width/2);
+      popMatrix();
+    } 
+    else {
+      rect(width/2, height/7, 100, 130);
+      textSize(120);
+      fill(255);
+      text(countDown, width/2, height/7);
+    }
     // then show progress bar while
     // downloading images, displaying filtering image, scrap images and text   
     // save PDF, show "your poster is printing, it will take a few mins"
@@ -393,7 +407,7 @@ void renderPrinting() {
     render_textfield = true;
     // save a PDF
     //      saveImage("output/" + timestamp()+".jpg");
-    saveHiResPDF(1, "output/" + timestamp()+".pdf");
+    saveHiResPDF(.65, "output/" + timestamp()+".pdf");
     render_printing = false;
     isPrinted = true;
   }
@@ -433,7 +447,7 @@ String timestamp() {
   return String.format("%1$ty%1$tm%1$td_%1$tH%1$tM%1$tS", now);
 }
 
-void saveHiResPDF(int scaleFactor, String file) {
+void saveHiResPDF(float scaleFactor, String file) {
   //  PGraphics pdf = createGraphics(width*scaleFactor, height*scaleFactor, PDF, file);
   PDF pdf = new PDF(this, width*scaleFactor, height*scaleFactor, sketchPath(file));
   beginRecord(pdf);
@@ -458,27 +472,27 @@ void renderPoster() {
     if (portrait) {
       pushMatrix();
       rotate(PI);
-      translate(-width,-height);
+      translate(-width, -height);
       blendMode(BLEND);
       renderFilteredImage(drawMode);
       rectMode(CORNER);
       noStroke();
       rotate(-PI/2);
-      translate(-height,0);
+      translate(-height, 0);
       renderScraper();
-//      translate(height/5,0);
+      //      translate(height/5,0);
       fill(a);
       //  blendMode(SUBTRACT);
       //    blendMode(SCREEN);
-      rect(0, 850, height, 150);
+      rect(0, (width/1.618), height, 150);
       fill(b);
-      rect(0, 1000, height, 12);
+      rect(0, (width/1.618)+150, height, 12);
       fill(c);
-      rect(0, 1012, height, 80);
+      rect(0, (width/1.618)+162, height, 80);
       fill(255);
       textFont(tField.greyscaleBasic, 64);
       textAlign(RIGHT);
-      text((searchName.toUpperCase()), height-margin, 990);
+      text((searchName.toUpperCase()), height-margin, (width/1.618)+80);
       /// smaller type
       // larger type
       textFont(tField.greyscaleBold, 30);
@@ -508,21 +522,21 @@ void renderPoster() {
   }
 }   
 
-
+/*
 void controlEvent(ControlEvent theEvent) {
-  if (theEvent.isAssignableFrom(Textfield.class)) {
-    println("controlEvent: accessing a string from controller '"
-      +theEvent.getName()+"': "
-      +theEvent.getStringValue()
-      );
-  }
-  searchName = theEvent.getStringValue();
-  if (searchName.equals("") || searchName.equals(" ")) {
-    searchName = "random people";
-  } 
-  searchName = searchName.replaceAll("\\s+", "+");
-  scraping = new Scraper(searchName);
-
-  cp5.remove(">>");
-}
-
+ if (theEvent.isAssignableFrom(Textfield.class)) {
+ println("controlEvent: accessing a string from controller '"
+ +theEvent.getName()+"': "
+ +theEvent.getStringValue()
+ );
+ }
+ searchName = theEvent.getStringValue();
+ if (searchName.equals("") || searchName.equals(" ")) {
+ searchName = "random people";
+ } 
+ searchName = searchName.replaceAll("\\s+", "+");
+ scraping = new Scraper(searchName);
+ 
+ cp5.remove(">>");
+ }
+ */
