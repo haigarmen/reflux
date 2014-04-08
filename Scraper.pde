@@ -7,8 +7,8 @@ class Scraper {
   int photoWidth, photoHeight;
   int cropSize = 64;
   int imagePadding = 0;
-  int numberOfImages = 32;
-  int imagesPerRow = 12;
+  int numberOfImages = 30;
+  int imagesPerRow = 15;
   int numberOfRows = numberOfImages/imagesPerRow;
   int topMargin = int(width/goldenR)-30;
   boolean isFinished;

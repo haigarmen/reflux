@@ -179,8 +179,8 @@ void keyPressed() {
       break;
     case 'p':
       if (render_capture) {
-        println("P pressed");
-        tField.setMsg("Creating Poster for "+ searchName);
+//        println("P pressed");
+        
         render_capture = false;
         render_poster = true;
         //      saveHiResPDF(4, "output/" + timestamp()+".pdf");
@@ -302,6 +302,7 @@ void restartCam() {
   render_capture = false;
   render_dither = false;
   isPrinted = false;
+  keyboardOn = true;
   searchName = "";
   cam.start();
   render_cam = true;
@@ -361,10 +362,10 @@ void renderCountdown() {
     if (portrait) {
       pushMatrix();
       rotate(PI/2);
-      rect(height/2, width/2, 120, 120);
+      rect(height/2, -width/2, 120, 120);
       textSize(120);
       fill(255);
-      text(countDown, height/2, width/2);
+      text(countDown, height/2, 2000);
       popMatrix();
     } 
     else {
@@ -384,7 +385,7 @@ void renderCountdown() {
       // this might be why we can't go to render_poster automatically and need to pre
       render_countdown = false;
       //      tField.setMsg("Scraping the web: " + searchName + ", press P for poster");
-      tField.setMsg("Scraping the web: " + searchName);
+      tField.setMsg("press P for poster");
 
       // fade down to black first
       startTime = millis();
@@ -461,7 +462,7 @@ void renderPoster() {
   color c = 0xAAc50600; // red
 
   if (render_poster) {
-    tField.setMsg("You're poster is ready");
+    tField.setMsg("Creating Poster for "+ searchName);
     render_capture = false;
     render_dither = true;
     render_scraper = true;
@@ -495,7 +496,7 @@ void renderPoster() {
       textFont(tField.greyscaleBold, 30);
       text("> IMAGE SEARCH RESULT COUNT: "+ (scraping.resultCount), height-margin, (width/goldenR)+200);
       textFont(tField.greyscaleBasic, 30);
-      text(("> CAPTURED ON: " + timestamp()), height-margin, (width/goldenR)+250);
+      text(("> CAPTURED ON: " + timestamp()), height-margin, (width/goldenR)+230);
       blendMode(BLEND);
       popMatrix();
     }
@@ -503,7 +504,7 @@ void renderPoster() {
     fader1.showFade = false;
 
     if (!isPrinted) {
-      println("finished printing");
+      tField.setMsg("You're poster is ready");
       render_printing = true;
     } 
     else {
