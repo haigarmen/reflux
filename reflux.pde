@@ -28,12 +28,13 @@
 // resultsCount not influencing drawMode yet FIXED (could be tweaked)
 // printing not working after reset - should print after rendering poster not before FIXED
 
-// press 0 to restart 
+// press 0 to restart
 // Make it work in Portrait mode FIXED
 // rotate textfield (maybe drop controlp5) FIXED
 // fix layout of poster FIXED
 // get feedback messages right- press P comes after fade to black
 // fix the halftone dot density in Ditherer 2
+// fix 
 
 import processing.pdf.*;
 import java.util.Calendar;
@@ -125,8 +126,8 @@ void setup() {
     }
     // The camera can be initialized directly using an element from the array returned by list():
     //    cam = new Capture(this, video_width, video_height, "FaceTime HD Camera");
-    cam = new Capture(this, video_width, video_height, "Built-in iSight");
-    //      cam = new Capture(this, video_width, video_height, "Microsoft® LifeCam Show(TM)");
+//    cam = new Capture(this, video_width, video_height, "Built-in iSight");
+      cam = new Capture(this, video_width, video_height, "Microsoft® LifeCam Show(TM)");
     cam.start();
   }
   //  progBar = new ProgressBar(4000);
@@ -179,8 +180,8 @@ void keyPressed() {
       break;
     case 'p':
       if (render_capture) {
-//        println("P pressed");
-        
+        //        println("P pressed");
+
         render_capture = false;
         render_poster = true;
         //      saveHiResPDF(4, "output/" + timestamp()+".pdf");
@@ -188,7 +189,7 @@ void keyPressed() {
       break;
     case 'v':
       restartCam();
-      tField.setMsg("Press the 'c' key to capture image.");
+      tField.setMsg("Restarting now");
       break;
     case '1':
       drawMode = 1;
@@ -357,16 +358,14 @@ void renderCountdown() {
     // show countdown
     int countDown = ((timer.totalTime/1000) - int(timer.passedTime/1000));
     tField.setMsg("Photo will be taken in");
-    fill(0);
-    rectMode(CENTER);
     if (portrait) {
-      pushMatrix();
-      rotate(PI/2);
-      rect(height/2, -width/2, 120, 120);
+//      rotate(-PI/2);
+      fill(53,0,0);
+      rectMode(CENTER);
+      ellipse(width/2, -height/2, 200, 200);
       textSize(120);
       fill(255);
-      text(countDown, height/2, 2000);
-      popMatrix();
+      text(countDown, width/2, -height/2);
     } 
     else {
       rect(width/2, height/7, 100, 130);
