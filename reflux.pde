@@ -73,12 +73,8 @@ Ditherer img;
 
 //int gridSize = 10;
 int drawMode = 1;
-<<<<<<< HEAD
-int margin = 30;
-=======
 float goldenR = 1.618;
 int margin = 180;
->>>>>>> FETCH_HEAD
 boolean portrait = true;
 
 String folder_path  = "output/";
@@ -104,8 +100,8 @@ boolean sketchFullScreen() {
 
 void setup() {
   frame.setBackground(new java.awt.Color(0, 0, 0));
-//  size(1280, 960);
-    size(1920, 1440);
+  //  size(1280, 960);
+  size(1920, 1440);
   smooth();
   noStroke();
   video_width = 640;
@@ -128,15 +124,15 @@ void setup() {
       //      println(cameras[i]);
     }
     // The camera can be initialized directly using an element from the array returned by list():
-//    cam = new Capture(this, video_width, video_height, "FaceTime HD Camera");
+    //    cam = new Capture(this, video_width, video_height, "FaceTime HD Camera");
     cam = new Capture(this, video_width, video_height, "Built-in iSight");
     //      cam = new Capture(this, video_width, video_height, "Microsoft® LifeCam Show(TM)");
     cam.start();
   }
   //  progBar = new ProgressBar(4000);
   if (portrait) {
-    tField = new TextField("Enter your full name and press ENTER", height/2, -int(width/goldenR), 28, 255);
-    nameField = new TextField(searchName, height/2, -int((width/goldenR)-84), 56, 255);
+    tField = new TextField("Enter your full name and press ENTER", height/2, -int((width-(width/goldenR))), 28, 255);
+    nameField = new TextField(searchName, height/2, -int((width-(width/goldenR))-84), 56, 255);
   } 
   else {
     tField = new TextField("Enter your full name and press ENTER", width/2, int(height*.6), 30, 255);
@@ -306,6 +302,7 @@ void restartCam() {
   render_capture = false;
   render_dither = false;
   isPrinted = false;
+  searchName = "";
   cam.start();
   render_cam = true;
 }
@@ -459,7 +456,7 @@ void saveHiResPDF(float scaleFactor, String file) {
 }
 
 void renderPoster() {
-  color a = 0xAA17a1e2; // blue
+  color a = 0x8817a1e2; // blue
   color b = 0xCC000000; // black
   color c = 0xAAc50600; // red
 
@@ -484,21 +481,21 @@ void renderPoster() {
       fill(a);
       //  blendMode(SUBTRACT);
       //    blendMode(SCREEN);
-      rect(0, (width/1.618), height, 150);
+      rect(0, (width/goldenR), height, 150);
       fill(b);
-      rect(0, (width/1.618)+150, height, 12);
+      rect(0, (width/goldenR)+150, height, 12);
       fill(c);
-      rect(0, (width/1.618)+162, height, 80);
+      rect(0, (width/goldenR)+162, height, 80);
       fill(255);
       textFont(tField.greyscaleBasic, 64);
       textAlign(RIGHT);
-      text((searchName.toUpperCase()), height-margin, (width/1.618)+80);
+      text((searchName.toUpperCase()), height-margin, (width/goldenR)+140);
       /// smaller type
       // larger type
       textFont(tField.greyscaleBold, 30);
-      text("> IMAGE SEARCH RESULT COUNT: "+ (scraping.resultCount), height-margin, 1050);
+      text("> IMAGE SEARCH RESULT COUNT: "+ (scraping.resultCount), height-margin, (width/goldenR)+200);
       textFont(tField.greyscaleBasic, 30);
-      text(("> CAPTURED ON: " + timestamp()), height-margin, 1080);
+      text(("> CAPTURED ON: " + timestamp()), height-margin, (width/goldenR)+250);
       blendMode(BLEND);
       popMatrix();
     }
