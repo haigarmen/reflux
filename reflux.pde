@@ -94,9 +94,9 @@ String searchName = "";
 Timer timer;
 int startTime = millis();
 
-boolean sketchFullScreen() {
-  return false;
-}
+//boolean sketchFullScreen() {
+//  return false;
+//}
 
 
 void setup() {
@@ -125,9 +125,9 @@ void setup() {
       //      println(cameras[i]);
     }
     // The camera can be initialized directly using an element from the array returned by list():
-    //    cam = new Capture(this, video_width, video_height, "FaceTime HD Camera");
+      cam = new Capture(this, video_width, video_height, "FaceTime HD Camera");
 //    cam = new Capture(this, video_width, video_height, "Built-in iSight");
-      cam = new Capture(this, video_width, video_height, "Microsoft® LifeCam Show(TM)");
+//      cam = new Capture(this, video_width, video_height, "Microsoft® LifeCam Show(TM)");
     cam.start();
   }
   //  progBar = new ProgressBar(4000);
